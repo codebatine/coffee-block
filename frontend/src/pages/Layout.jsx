@@ -5,10 +5,10 @@ import { Header } from "../components/header/Header";
 export const Layout = () => {
   return (
     <div className="container">
-    <header className="header">
-      <Header />
+      <header className="header">
+        <Header />
       </header>
-      <main>
+      <main className="main-content">
         <Outlet />
       </main>
       <footer className="footer">

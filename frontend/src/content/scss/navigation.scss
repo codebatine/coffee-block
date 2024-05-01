@@ -5,7 +5,7 @@
   top: 0;
   padding: 10px 0;
   background-color: #fff;
-  margin-top: 50px;
+  margin-top: 30px;
   border: 1px solid #000;
   text-align: left;
   width: 100%
@@ -14,7 +14,7 @@
 .nav-links {
   list-style: none;
   display: flex;
-  justify-content: flex-start; // Align items to the left
+  justify-content: flex-start;
   flex-grow: 1;
   padding: 0 10px;
 }
