@@ -1,90 +1,111 @@
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 70vw;
-}
-
-.coffee_name {
-  color: #333; /* Dark grey */
-  text-align: center;
-  font-size: 4vw;
-}
 
 .cup {
-  width: var(--cup-width);
-  height: var(--cup-height);
-  border-radius: 0 0 10vw 10vw;
+  height: 50px;
+  width: 75px;
+  border-radius: 0 0 37.5px 37.5px;
   position: relative;
-  background-color: var(--cup-color);
-  z-index: 10;
-  box-sizing: border-box;
+  background: #e6e6e6;
+  box-shadow: inset 4.25px -1.75px 0 0 rgba(51, 51, 51, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgba(51, 51, 51, 0.2);
+  user-select: none;
+  cursor: default;
+  margin-right: 20px;
+
+}
+
+.cup::before,
+.cup::after {
+  content: '';
+  position: absolute;
+}
+
+.cup::before {
+  width: 75px;
+  height: 12.5px;
+  border-radius: 50%;
+  top: -6px;
+  left: 0;
+  box-shadow: inset 0.75px 0 0 0 rgba(51, 51, 51, 0.2), inset 0 0 0 1px #e6e6e6, inset 0 3.5px 0 0 #d6d6d6;
+  z-index: 1;
 }
 
 .cup::after {
-  content: "";
-  position: absolute;
-  top: 10%;
-  left: calc(100% - 1vw);
-  width: var(--cup-handle-width);
-  height: var(--cup-handle-height);
-  border: var(--main-border);
-  border-radius: 50% 30%;
+  width: 25px;
+  height: 25px;
+  border-radius: 0 50% 50%;
+  right: -23.75px;
+  top: 0;
+  border: 6.25px solid #e6e6e6;
+  box-shadow: inset 1.75px -1.75px 0 0 rgba(51, 51, 51, 0.2), 0.75px -0.75px 0 0 rgba(51, 51, 51, 0.2);
+  z-index: 1;
 }
 
-.plate {
+.cup .coffee {
   position: absolute;
-  top: calc(100%);
-  left: calc((var(--cup-width) - var(--plate-width)) / 2);
-  width: var(--plate-width);
-  background: var(--cup-color);
-  height: var(--plate-height);
-  border-radius: 1vw;
+  width: 74.5px;
+  height: 11.5px;
+  top: -5.5px;
+  left: 0;
+  border-radius: 50%;
+  background: #532d09;
 }
 
-.filling {
+.cup .coffee::before,
+.cup .coffee::after {
+  content: '';
   position: absolute;
-  left: calc(var(--cup-border-width) / 2);
-  bottom: calc(var(--cup-border-width) / 2);
-  width: var(--cup-inside-width);
-  height: var(--cup-inside-height);
-  overflow: hidden;
-  border-radius: 0 0 10vw 10vw;
-  background-color: var(--main-bg-color);
-  bottom: 1vw;
+  display: block;
+  background: rgba(51, 51, 51, 0.2);
+  border-radius: 25px 0;
+  width: 25px;
+  height: 7.5px;
+  z-index: 2;
+  opacity: 0;
 }
 
-.filling div {
-  position: absolute;
-  width: 100%;
-  transition: all 1s linear;
-  color: #817f75;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  height: 0;
-  overflow: hidden;
-  font-size: 3vw;
-  height: 100%;
-  bottom: -100%;
-  box-sizing: border-box;
-  animation: fillUp 5s ease-in-out forwards;
+.cup .coffee::before {
+  animation: smo 2s infinite;
 }
 
-@keyframes fillUp {
+.cup .coffee::after {
+  animation: smo2 3s infinite;
+}
+
+@keyframes smo {
   0% {
-    bottom: -100%;
+    opacity: 0;
+    transform: rotateZ(-45deg);
+    top: -5px;
+    left: 2.5px;
+  }
+  65% {
+    opacity: 1;
   }
   100% {
-    bottom: 0;
+    transform: rotateZ(-45deg);
+    opacity: 0;
+    top: -25px;
+    left: 25px;
   }
 }
 
-div.coffee {
-  background: var(--coffee-color);
-  bottom: var(--coffee-bottom);
-  line-height: 4vw;
-  z-index: 7;
-  text-align: center;
+@keyframes smo2 {
+  0% {
+    opacity: 0;
+    transform: rotateZ(-45deg);
+    top: -5px;
+    left: 27.5px;
+  }
+  65% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotateZ(-45deg);
+    opacity: 0;
+    top: -25px;
+    left: 50px;
+  }
 }
