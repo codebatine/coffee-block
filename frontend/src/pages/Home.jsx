@@ -1,9 +1,9 @@
-import coffee1 from '../content/img/coffee-1.jpg';
-import coffee2 from '../content/img/coffee-2.jpg';
-import coffee3 from '../content/img/coffee-3.jpg';
-import coffee4 from '../content/img/coffee-4.jpg';
-import coffee5 from '../content/img/coffee-5.jpg';
-import coffee6 from '../content/img/coffee-6.jpg';
+import coffee1 from '../content/img/coffee-1-grid.jpg';
+import coffee2 from '../content/img/coffee-2-grid.jpg';
+import coffee3 from '../content/img/coffee-3-grid.jpg';
+import coffee4 from '../content/img/coffee-4-grid.jpg';
+import coffee5 from '../content/img/coffee-5-grid.jpg';
+import coffee6 from '../content/img/coffee-6-grid.jpg';
 
 export const Home = () => {
   return (
