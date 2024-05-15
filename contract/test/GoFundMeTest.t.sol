@@ -5,19 +5,18 @@ pragma solidity ^0.8.18;
 import {Test, console} from "forge-std/Test.sol";
 import {goFundMe} from "../src/goFundMe.sol";
 import {DeployFundMe} from "../script/DeployFundMe.s.sol";
+import {Constants} from "../src/constants/Constants.c.sol";
 
 contract FundMeTest is Test {
-    FundMe fundMe;
+    goFundMe fundMe;
 
     function setUp() external {
         console.log("Deploying FundMe contract...");
         //fundMe = new FundMe(0x694AA1769357215DE4FAC081bf1f309aDC325306);
         DeployFundMe deployFundMe = new DeployFundMe();
         fundMe = deployFundMe.run();
-    }
 
-    function testMinimumDollarIsFive() external view {
-        assertEq(fundMe.MINIMUM_USD(), 5e18);
+        address signer = vm.addr(0x1a11ce);
     }
 
     function testOwnerIsMsgSender() public view {
@@ -37,5 +36,12 @@ contract FundMeTest is Test {
         uint256 version = fundMe.getVersion();
         console.log("Price Feed Version", version);
         assertEq(version, 4);
+    }
+
+    function testFund() public {
+        uint256 ethAmount = 1 ether;
+        fundMe.fund{value: ethAmount}();
+        uint256 amountFunded = fundMe.addressToAmountFunded(msg.sender);
+        assertEq(amountFunded, ethAmount);
     }
 }
