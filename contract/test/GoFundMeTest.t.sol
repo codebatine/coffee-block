@@ -5,10 +5,12 @@ pragma solidity ^0.8.18;
 import {Test, console} from "forge-std/Test.sol";
 import {goFundMe} from "../src/goFundMe.sol";
 import {DeployFundMe} from "../script/DeployFundMe.s.sol";
+
 import {Constants} from "../src/constants/Constants.c.sol";
 
 contract FundMeTest is Test {
     goFundMe fundMe;
+
 
     function setUp() external {
         console.log("Deploying FundMe contract...");
@@ -16,7 +18,9 @@ contract FundMeTest is Test {
         DeployFundMe deployFundMe = new DeployFundMe();
         fundMe = deployFundMe.run();
 
+
         address signer = vm.addr(0x1a11ce);
+
     }
 
     function testOwnerIsMsgSender() public view {
@@ -38,10 +42,12 @@ contract FundMeTest is Test {
         assertEq(version, 4);
     }
 
+
     function testFund() public {
         uint256 ethAmount = 1 ether;
         fundMe.fund{value: ethAmount}();
         uint256 amountFunded = fundMe.addressToAmountFunded(msg.sender);
         assertEq(amountFunded, ethAmount);
     }
+
 }
