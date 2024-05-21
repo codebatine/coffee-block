@@ -37,6 +37,10 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Josefin Sans", sans-serif;
 }
 
+a:hover {
+  cursor: pointer;
+}
+
 .main-content {
   display: flex;
   justify-content: center;

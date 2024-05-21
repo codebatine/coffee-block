@@ -4,8 +4,10 @@ import { CoffeeCupLogo } from '../../pages/CoffeeCupLogo';
 export const Header = () => {
   return (
     <header className="header">
-      <CoffeeCupLogo />
       <ul className="nav-links">
+        <li>
+          <CoffeeCupLogo />
+        </li>
         <li>
           <NavLink to={"/coffeblock/"} >
             Home
