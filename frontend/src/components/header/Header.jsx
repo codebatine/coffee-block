@@ -4,7 +4,6 @@ import { CoffeeCupLogo } from '../../pages/CoffeeCupLogo';
 export const Header = () => {
   return (
     <header className="header">
-      <CoffeeCupLogo />
       <ul className="nav-links">
         <li>
           <NavLink to="/coffeblock/" end className={({ isActive }) => (isActive ? 'active-link' : '')} >

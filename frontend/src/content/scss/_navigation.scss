@@ -6,25 +6,19 @@
   padding: 10px 0;
   background-color: #fff;
   margin-top: 30px;
-  border: 1px solid #000;
   text-align: left;
-  width: 100%
+  width: 100%;
+  border-radius: 10px;
 }
 
 .nav-links {
   list-style: none;
   display: flex;
-  justify-content: space-evenly;
-  align-items: center;
+  justify-content: center;
   flex-grow: 1;
   padding: 0 10px;
 }
 
 .nav-links li {
   padding: 0 10px;
-  font-size: xx-large;
-}
-
-.nav-links .active-link {
-  font-weight: bold;
 }
