@@ -1,0 +1,22 @@
+.view-all-wrapper{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .view-all-wrapper{
+
+    button{
+      margin: 5px;
+      padding: 5px;
+      border: 1px solid black;
+      border-radius: 5px;
+    }
+  }
+}
+
+.view-all-display{
+  border: 1px solid black;
+  margin: 5px;
+  padding: 5px;
+
+}
