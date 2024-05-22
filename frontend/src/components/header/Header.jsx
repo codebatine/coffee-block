@@ -7,6 +7,11 @@ export const Header = () => {
       <ul className="nav-links">
         <li>
           <NavLink to="/coffeblock/" end className={({ isActive }) => (isActive ? 'active-link' : '')} >
+          <CoffeeCupLogo />
+        </li>
+        <li>
+          <NavLink to={"/coffeblock/"} >
+
             Home
           </NavLink>
         </li>

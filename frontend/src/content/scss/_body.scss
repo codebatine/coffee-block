@@ -18,7 +18,7 @@ body {
 
   a{
     cursor: pointer;
-  }  
+  } 
 
   .container {
     display: block;
@@ -76,7 +76,9 @@ a:hover {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
   transition: box-shadow 0.3s ease-in-out;
   position: relative;
+
   cursor: pointer;
+
 }
 
 .img-container {
