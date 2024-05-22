@@ -17,10 +17,12 @@
 pragma solidity ^0.8.25;
 
 import {Constants} from "./constants/Constants.c.sol";
+import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 
 error NotOwner();
 
 contract GoFundMe {
+    IERC20 public usdc;
     string public projectName;
     uint256 public goalInUsd;
     uint256 public totalBalance;
@@ -43,7 +45,7 @@ contract GoFundMe {
         i_owner = msg.sender;
         goalInUsd = _goalInUsd;
         projectName = s_projectName;
-        usdcTokenAddress = _usdcTokenAddress;
+        usdc = IERC20(_usdcTokenAddress);
     }
 
     event FundReceived(address indexed funder, uint256 amount);
@@ -55,18 +57,16 @@ contract GoFundMe {
             "you need to send more than 5 USD"
         );
 
-        require(_amount < )
-
+        require(
+            usdc.transferFrom(msg.sender, address(this), _amount),
+            "Donation failed"
+        );
 
         m_donations[msg.sender] += _amount;
         totalBalance += _amount;
         funders.push(msg.sender);
 
         emit FundReceived(msg.sender, _amount);
-    }
-
-    function getOwner() public view returns (address) {
-        return i_owner;
     }
 
     function withdraw() public onlyOwner {
@@ -87,7 +87,4 @@ contract GoFundMe {
         require(callSuccess, "Call failed");
     }
 
-    function getProjectName() public view returns (string memory) {
-        return projectName;
-    }
 }

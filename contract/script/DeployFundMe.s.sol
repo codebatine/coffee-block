@@ -7,9 +7,7 @@ import {goFundMe} from "../src/goFundMe.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
 
 contract DeployFundMe is Script {
-
     function run() external returns (goFundMe) {
-
         HelperConfig helperConfig = new HelperConfig();
         address ethUsdPriceFeed = helperConfig.activeNetworkConfig();
 

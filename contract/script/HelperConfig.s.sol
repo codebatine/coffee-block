@@ -3,7 +3,7 @@
 pragma solidity ^0.8.18;
 
 import {Script} from "forge-std/Script.sol";
-import {Constants} from "../src/constants/Constants.c.sol";
+import {Constants, ConstChainId} from "../src/constants/Constants.c.sol";
 import {MockV3Aggregator} from "../test/mocks/MockV3Aggregator.s.sol";
 
 contract HelperConfig is Script {
@@ -14,9 +14,9 @@ contract HelperConfig is Script {
     }
 
     constructor() {
-        if (block.chainid == Constants.SEPOLIA_CHAIN_ID) {
+        if (block.chainid == ConstChainId.SEPOLIA) {
             activeNetworkConfig = getSepoliaEthConfig();
-        } else if (block.chainid == Constants.MAINNET_CHAIN_ID) {
+        } else if (block.chainid == ConstChainId.ETHEREUM) {
             activeNetworkConfig = getMainnetEthConfig();
         } else {
             activeNetworkConfig = getOrCreateAnvilEthConfig();
