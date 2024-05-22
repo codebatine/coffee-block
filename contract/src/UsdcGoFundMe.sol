@@ -16,65 +16,69 @@
 
 pragma solidity ^0.8.25;
 
-import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-import {PriceConverter} from "./PriceConverter.sol";
 import {Constants} from "./constants/Constants.c.sol";
+import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 
 error NotOwner();
 
-// Name of the company
-// amount
-
-contract goFundMe {
-    //uint256 public goal;
-    // uint256 public deadline;
-    // uint256 public balance;
+contract GoFundMe {
+    IERC20 public usdc;
     string public projectName;
-    mapping(address => uint256) public contributions;
-
-    using PriceConverter for uint256;
-
-    mapping(address => uint256) public addressToAmountFunded;
+    uint256 public goalInUsd;
+    uint256 public totalBalance;
     address[] public funders;
-
     address public immutable i_owner;
-    AggregatorV3Interface private s_priceFeed;
+    address public usdcTokenAddress;
 
-    constructor(address priceFeed) {
-        i_owner = msg.sender;
-        s_priceFeed = AggregatorV3Interface(priceFeed);
-    }
-
-    function fund() public payable {
-        require(
-            msg.value.getConversionRate(s_priceFeed) >= Constants.MINIMUM_USD,
-            "You need to spend more ETH!"
-        );
-        addressToAmountFunded[msg.sender] += msg.value;
-        funders.push(msg.sender);
-    }
-
-    function getVersion() public view returns (uint256) {
-        return s_priceFeed.version();
-    }
-
-    function getOwner() public view returns (address) {
-        return i_owner;
-    }
+    mapping(address => uint256) public m_donations;
 
     modifier onlyOwner() {
         if (msg.sender != i_owner) revert NotOwner();
         _;
     }
 
+    constructor(
+        string memory s_projectName,
+        uint256 _goalInUsd,
+        address _usdcTokenAddress
+    ) {
+        i_owner = msg.sender;
+        goalInUsd = _goalInUsd;
+        projectName = s_projectName;
+        usdc = IERC20(_usdcTokenAddress);
+    }
+
+    event FundReceived(address indexed funder, uint256 amount);
+    event FundsWithdrawn(address indexed owner, uint256 amount);
+
+    function fund(uint256 _amount) public payable {
+        require(
+            _amount >= Constants.MINIMUM_USD,
+            "you need to send more than 5 USD"
+        );
+
+        require(
+            usdc.transferFrom(msg.sender, address(this), _amount),
+            "Donation failed"
+        );
+
+        m_donations[msg.sender] += _amount;
+        totalBalance += _amount;
+        funders.push(msg.sender);
+
+        emit FundReceived(msg.sender, _amount);
+    }
+
     function withdraw() public onlyOwner {
+        require(totalBalance >= goalInUsd, "Goal not reached");
+
         for (
             uint256 funderIndex = 0;
             funderIndex < funders.length;
             funderIndex++
         ) {
             address funder = funders[funderIndex];
-            addressToAmountFunded[funder] = 0;
+            m_donations[funder] = 0;
         }
         funders = new address[](0);
         (bool callSuccess, ) = payable(msg.sender).call{
@@ -83,15 +87,4 @@ contract goFundMe {
         require(callSuccess, "Call failed");
     }
 
-    function getProjectName() public view returns (string memory) {
-        return projectName;
-    }
-
-    fallback() external payable {
-        fund();
-    }
-
-    receive() external payable {
-        fund();
-    }
 }
