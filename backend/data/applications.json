@@ -1,0 +1,38 @@
+[
+  {
+    "company": "Company name for contract 2",
+    "amount": "5000000",
+    "area": "kaaafffe",
+    "reason": "pengar",
+    "time": "555",
+    "name": "123",
+    "email": "456",
+    "date": 1716373691916,
+    "published": "no",
+    "id": "aeadd7fb0dce497386f4d2b16c6f6977"
+  },
+  {
+    "company": "Company name for contract 3",
+    "amount": "123123213",
+    "area": "knark",
+    "reason": "babababa",
+    "time": "546",
+    "name": "567",
+    "email": "2342",
+    "date": 1716373713614,
+    "published": "no",
+    "id": "a030eac1e5604fa485e516e83193c034"
+  },
+  {
+    "company": "Company name for contract 1",
+    "amount": "123",
+    "area": "1234",
+    "reason": "fghfgh",
+    "time": "fgh",
+    "name": "567",
+    "email": "346",
+    "date": 1716373722152,
+    "published": "no",
+    "id": "95f1b7c388694a73acf5679eee0c8f2a"
+  }
+]

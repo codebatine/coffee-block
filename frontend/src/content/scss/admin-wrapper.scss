@@ -1,0 +1,15 @@
+.admin-wrapper{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .application-admin-wrapper{
+
+    button{
+      margin: 5px;
+      padding: 5px;
+      border: 1px solid black;
+      border-radius: 5px;
+    }
+  }
+}

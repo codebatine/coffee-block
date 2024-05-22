@@ -16,7 +16,9 @@ body {
   background-repeat: no-repeat;
 }
 
-  
+  a{
+    cursor: pointer;
+  }  
 
   .container {
     display: block;
@@ -70,6 +72,7 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
   transition: box-shadow 0.3s ease-in-out;
   position: relative;
+  cursor: pointer;
 }
 
 .img-container {
