@@ -13,3 +13,25 @@
     }
   }
 }
+
+.application-admin-display{
+  border: 1px solid black;
+  margin: 5px;
+  padding: 5px;
+
+  .admin-publish-buttons{
+    display: flex;
+    justify-content: end;
+    
+    .button-pub{
+      background-color:rgb(255, 141, 141);
+      cursor: pointer;
+      
+    }
+    .button-unpub{
+      background-color:  rgb(112, 255, 112);
+      cursor: pointer;
+    }
+  }
+
+}

@@ -14,11 +14,17 @@
 .nav-links {
   list-style: none;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-evenly;
+  align-items: center;
   flex-grow: 1;
   padding: 0 10px;
 }
 
 .nav-links li {
   padding: 0 10px;
+  font-size: xx-large;
+}
+
+.nav-links .active-link {
+  font-weight: bold;
 }

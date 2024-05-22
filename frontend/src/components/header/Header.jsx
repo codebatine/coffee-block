@@ -7,27 +7,27 @@ export const Header = () => {
       <CoffeeCupLogo />
       <ul className="nav-links">
         <li>
-          <NavLink to={"/coffeblock/"} >
+          <NavLink to="/coffeblock/" end className={({ isActive }) => (isActive ? 'active-link' : '')} >
             Home
           </NavLink>
         </li>
         <li>
-          <NavLink to={"/coffeblock/viewall"} >
+          <NavLink to="/coffeblock/viewall" className={({ isActive }) => (isActive ? 'active-link' : '')}>
             View all
           </NavLink>
         </li>
         <li>
-          <NavLink to={"/coffeblock/apply"} >
+          <NavLink to="/coffeblock/apply" className={({ isActive }) => (isActive ? 'active-link' : '')}>
             Apply
           </NavLink>
         </li>
         <li>
-          <NavLink to={"/coffeblock/about"} >
+          <NavLink to="/coffeblock/about" className={({ isActive }) => (isActive ? 'active-link' : '')}>
             About
           </NavLink>
         </li>
         <li>
-          <NavLink to={"/coffeblock/admin"} >
+          <NavLink to="/coffeblock/admin" className={({ isActive }) => (isActive ? 'active-link' : '')}>
             Admin
           </NavLink>
         </li>

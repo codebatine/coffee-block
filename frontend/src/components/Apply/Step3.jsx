@@ -3,7 +3,7 @@ import { useState } from "react"
 import Application from "../../models/Application"
 import axios from 'axios';
 
-export const Step3 = () => {
+export const Step3 = ({setInfoStatus}) => {
 
   const [form, setForm] = useState(new Application())
 
@@ -21,6 +21,7 @@ export const Step3 = () => {
     try {
       const response = await axios.post('http://localhost:3001/api/v1/applications/submit', form);
       console.log(response.data);
+      setInfoStatus("Submitted")
     } catch (error) {
       console.error('There was an error submitting the form!', error);
     }

@@ -29,26 +29,28 @@ export const addApplicationInfo = (req, res, next) => {
   }
 };
 
-export const updateApplicationStatus = (req, res, next) => {
-  console.log("update function");
-  
-  const application = getApplication(req, res, next);
+export const updateApplicationStatus = (req, res, next) => {  
+  try {
+    const application = getApplication(req, res, next);
+    if (application) {
+      application.published = req.body.published ?? application.published;
 
-  if (application) {
-    application.published = req.body.published ?? application.published;
-
-    fileHandler(folder, file, applications);
-    res.status(204).end();
+      writeFile(folder, file, applications);
+      res.status(204).end();
+    }
+  } catch (error) {
+    console.error('Error updating application status', error);
+    res.status(500).send('Server error');
   }
 };
 
 const getApplication = (req, res, next) => {
-  const application = applications.find((appli) => appli.id === req.params.id);
+  const application = applications.find((appli) => appli.id === req.params.id); 
 
   if (!application) {
-    return next(
-      new ErrorResponse(`Kunde inte hitta någon kund med id: ${req.params.id}`)
-    );
+    const error = new Error(`Kunde inte hitta någon kund med id: ${req.params.id}`);
+    error.status = 404;
+    return next(error);
   }
 
   return application;

@@ -32,6 +32,11 @@ app.use(cors());
 
 app.use('/api/v1/applications', applicationRouter);
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).send(err.message || 'Server error');
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

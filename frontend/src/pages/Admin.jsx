@@ -5,9 +5,8 @@ export const Admin = () => {
 
   const [applications, setApplications] = useState([])
 
-  const handlePublish = async (id) => {
-    console.log("frontend publish");
-    console.log(id);
+  const handlePublish = async (id, e) => {
+    e.preventDefault();
     try {
       // Update the published status in the backend
       await axios.patch(`http://localhost:3001/api/v1/applications/publish/${id}`, { published: "yes" });
@@ -23,10 +22,11 @@ export const Admin = () => {
     }
   };
 
-  const handleUnPublish = async (id) => {
+  const handleUnPublish = async (id, e) => {
+    e.preventDefault();
     try {
       // Update the published status in the backend
-      await axios.put(`http://localhost:3001/api/v1/applications/publish/${id}`, { published: "no" });
+      await axios.patch(`http://localhost:3001/api/v1/applications/publish/${id}`, { published: "no" });
 
       // Update the published status in the local state
       setApplications((prevApplications) =>
@@ -39,16 +39,21 @@ export const Admin = () => {
     }
   };
 
-  const handleClick = async () => {
+  // const handleClick = async () => {
+    useEffect(()=> {
+      const getApplications = async () => {
+        try {
+          const response = await axios.get('http://localhost:3001/api/v1/applications/')
+          setApplications(response.data)
+          console.log(response.data);
+        } catch (error) {
+          console.error('There was an error listing the applications!', error);
+        }
+      }
 
-    try {
-      const response = await axios.get('http://localhost:3001/api/v1/applications/')
-      setApplications(response.data)
-      console.log(response.data);
-    } catch (error) {
-      console.error('There was an error listing the applications!', error);
-    }
-  }
+      getApplications();
+  }, [])
+
   
 
   return (
@@ -57,7 +62,7 @@ export const Admin = () => {
 
       <div className="application-admin-wrapper">
         <h3>Applications</h3>
-        <button onClick={handleClick}>Retrieve applications</button>
+        {/* <button onClick={handleClick}>Retrieve applications</button> */}
         {applications.length > 0 ? 
         <section>{applications.map((application) => 
         <div key={application.id} className="application-admin-display">
@@ -68,7 +73,7 @@ export const Admin = () => {
           <div>{application.time || "time missing"}</div>
           <div>{application.date || "date missing"}</div>
           
-          <div>{application.published === "no" ? <button className="button-pub" onClick={() => handlePublish(application.id)}>PUBLISH</button> : <button className="button-pub" onClick={() => handleUnPublish(application.id)} >UNPUBLISH</button>}</div>
+          <div className="admin-publish-buttons">{application.published === "no" ? <button className="button-pub" onClick={(e) => handlePublish(application.id, e)}>UNPUBLISHED</button> : <button className="button-unpub" onClick={(e) => handleUnPublish(application.id, e)} >PUBLISHED</button>}</div>
         </div>
       )}</section>
         :
