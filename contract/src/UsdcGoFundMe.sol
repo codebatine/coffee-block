@@ -37,15 +37,11 @@ contract GoFundMe {
         _;
     }
 
-    constructor(
-        string memory s_projectName,
-        uint256 _goalInUsd,
-        address _usdcTokenAddress
-    ) {
+    constructor() {
         i_owner = msg.sender;
-        goalInUsd = _goalInUsd;
-        projectName = s_projectName;
-        usdc = IERC20(_usdcTokenAddress);
+        goalInUsd = 6 * 10 ** 6;
+        projectName = "Help me to buy a new computer";
+        usdc = IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238);
     }
 
     event FundReceived(address indexed funder, uint256 amount);
@@ -86,5 +82,4 @@ contract GoFundMe {
         }("");
         require(callSuccess, "Call failed");
     }
-
 }
