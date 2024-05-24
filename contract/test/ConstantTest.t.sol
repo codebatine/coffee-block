@@ -6,7 +6,7 @@ import {Test} from "forge-std/Test.sol";
 import {Constants, ConstChainId} from "../src/constants/Constants.c.sol";
 
 contract TestConstants is Test {
-    uint256 constant minimumUSD = 5e18;
+    uint256 constant minimumUSD = 5 * 10 ** 6;
 
     function testMinimumDollarIsFive() external pure {
         assertEq(Constants.MINIMUM_USD, minimumUSD);

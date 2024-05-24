@@ -37,11 +37,16 @@ contract GoFundMe {
         _;
     }
 
-    constructor() {
+    constructor(
+        uint256 _goalInUsd,
+        string memory _projectName,
+        address _usdcTokenAddress
+    ) {
         i_owner = msg.sender;
-        goalInUsd = 6 * 10 ** 6;
-        projectName = "Help me to buy a new computer";
-        usdc = IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238);
+        goalInUsd = _goalInUsd; // 6 * 10 ** 6;
+        projectName = _projectName; //"Help me to buy a new computer";
+        usdc = IERC20(_usdcTokenAddress); // IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238);
+        usdcTokenAddress = _usdcTokenAddress;
     }
 
     event FundReceived(address indexed funder, uint256 amount);
@@ -81,5 +86,21 @@ contract GoFundMe {
             value: address(this).balance
         }("");
         require(callSuccess, "Call failed");
+    }
+
+    function getUsdAddress() public view returns (address) {
+        return usdcTokenAddress;
+    }
+
+    function getFunder(uint256 i) public view returns (address) {
+        return funders[i];
+    }
+
+    function getTotalBalance() public view returns (uint256) {
+        return totalBalance;
+    }
+
+    function getOwner() public view returns (address) {
+        return i_owner;
     }
 }
