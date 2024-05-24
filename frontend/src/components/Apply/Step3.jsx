@@ -2,10 +2,13 @@ import React from 'react'
 import { useState } from "react"
 import Application from "../../models/Application"
 import axios from 'axios';
+import { fetchApplicationContract, getAddress } from '../../services/blockchainServices';
 
 export const Step3 = ({setInfoStatus}) => {
 
   const [form, setForm] = useState(new Application())
+  const [fetchStatus, setFetchStatus] = useState("Not fetched")
+  const [fetchData, setFetchData] = useState("")
 
   const handleSetForm = (e) => {
     const { name, value} = e.target
@@ -27,13 +30,32 @@ export const Step3 = ({setInfoStatus}) => {
     }
   }
 
+  const handleFetch = async (e) => {
+    e.preventDefault();
+    try {
+      const address = await getAddress();
+      console.log(address);
+      // const fetchedApplicationContract = await fetchApplicationContract(address)
+      const fetchedApplicationContract = await fetchApplicationContract()
+      setFetchStatus("fetched")
+      setFetchData(fetchedApplicationContract);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
-    <form onSubmit={handleSubmit}>
+    <>
       <h2>3. Provide info about your business</h2>
+          <div className="button-control">
+        <button onClick={handleFetch}>Retrieve your contract</button>
+      </div>
+    {fetchStatus === "fetched" &&
+    <form onSubmit={handleSubmit}>
       <div className="form-control">
         <label htmlFor="applyform-company-name">Company name</label>
         <select id="applyform-company-name" name="company" onChange={handleSetForm}>
-          <option>Company name for contract 1</option>
+          <option>{fetchData}</option>
           <option>Company name for contract 2</option>
           <option>Company name for contract 3</option>
         </select>
@@ -55,6 +77,7 @@ export const Step3 = ({setInfoStatus}) => {
         <label htmlFor="applyform-time-period">Time period for loan</label>
         <input type="text" id="applyform-time-period" name="time" onChange={handleSetForm}></input>
       </div>
+      
       <h3>Contact info</h3>
       <div className="form-control">
         <label htmlFor="applyform-name">Name</label>
@@ -68,5 +91,7 @@ export const Step3 = ({setInfoStatus}) => {
         <button>Submit</button>
       </div>
     </form>
+    }
+    </>
   )
 }

@@ -2,6 +2,7 @@ import React from 'react'
 import { useState } from "react"
 import Application from "../../models/Application"
 import axios from 'axios';
+import { createApplicationContract } from '../../services/blockchainServices';
 
 export const Step2 = ({setContractStatus}) => {
 
@@ -12,15 +13,16 @@ export const Step2 = ({setContractStatus}) => {
     setContractInput(prev => ({...prev, [name]: value}))
   }
 
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(contractInput);
     try {
-      
+      const applicationContract = await createApplicationContract(contractInput)
       setContractStatus("Created")
+      console.log(applicationContract);
     } catch (error) {
-
+      console.log(error);
     }
   }
 
