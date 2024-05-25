@@ -2,10 +2,21 @@
   display: flex;
   justify-content: center;
   padding: 10px 0;
-  background-color: #fff;
+  background-color: #eae1da;
   margin: 30px auto;
   width: 90%;
   border-radius: 10px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 100px;
+  height: auto;
+  margin-right: 20px;
 }
 
 .nav-links {
@@ -30,9 +41,16 @@
 }
 
 @media (max-width: 1119px) {
+  .header {
+    margin: 10px auto;
+    padding: 2px 0;
+  }
+
+  .logo {
+    display: none;
+  }
+
   .nav-links li {
     margin: 1rem 0;
   }
 }
-
-
