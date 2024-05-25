@@ -13,7 +13,6 @@
   user-select: none;
   cursor: default;
   margin-right: 20px;
-
 }
 
 .cup::before,
@@ -107,5 +106,11 @@
     opacity: 0;
     top: -25px;
     left: 50px;
+  }
+}
+
+@media (max-width: 1119px) {
+  .cup {
+    display: none;
   }
 }
