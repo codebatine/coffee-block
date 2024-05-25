@@ -1,11 +1,23 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { CoffeeCupLogo } from '../../pages/CoffeeCupLogo';
 
 export const Header = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <header className="header">
       <CoffeeCupLogo />
-      <ul className="nav-links">
+      <button id="menu-icon" className={isOpen ? 'open' : ''} onClick={toggleMenu}>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul className={`nav-links ${isOpen ? 'open' : ''}`}>
         <li>
           <NavLink to="/coffeblock/" end className={({ isActive }) => (isActive ? 'active-link' : '')} >
             Home
@@ -14,7 +26,7 @@ export const Header = () => {
         
         <li>
           <NavLink to="/coffeblock/viewall" className={({ isActive }) => (isActive ? 'active-link' : '')}>
-            View all
+            Projects
           </NavLink>
         </li>
         <li>
