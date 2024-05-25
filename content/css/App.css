@@ -46,6 +46,7 @@ body {
 
 a {
   cursor: pointer;
+  font-family: "Josefin Sans", sans-serif;
 }
 
 .container {
@@ -337,6 +338,11 @@ a:hover {
   font-weight: bold;
 }
 
+@media (max-width: 1119px) {
+  .nav-links li {
+    margin: 1rem 0;
+  }
+}
 .application-wrapper {
   display: flex;
   flex-direction: column;

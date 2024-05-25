@@ -29,5 +29,10 @@
   font-weight: bold;
 }
 
+@media (max-width: 1119px) {
+  .nav-links li {
+    margin: 1rem 0;
+  }
+}
 
 
