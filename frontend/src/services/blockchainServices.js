@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { CONTRTACT_ADDRESS_A, abi_a } from './config.js';
+import { CONTRTACT_ADDRESS_A, FUJI_CONTRACT_ADDRESS, abi_a } from './config.js';
 
 export const requestAccount = async () => {
   try {
@@ -13,8 +13,6 @@ export const requestAccount = async () => {
 };
 
 export const walletChecker = (errorMsg) => {
-  console.log('WalletChecker');
-
   if (!window.ethereum) {
     errorMsg =
       'Ethers.js: Web3 provider not found. Please install a wallet with Web3 support.';
@@ -70,13 +68,17 @@ export const createApplicationContract = async (contractInput) => {
     const parsedAmount = parseInt(amount);
     console.log('!contract input', company, parsedAmount);
 
-    const contractAddress = CONTRTACT_ADDRESS_A;
+    const functionInput = {
+      company,
+      parsedAmount,
+    };
+
+    const contractAddress = FUJI_CONTRACT_ADDRESS;
     const writeContract = await loadWriteContract_a(contractAddress);
     console.log('!writeContract:', writeContract);
 
     const transaction = await writeContract.createNewProject(
-      parsedAmount,
-      company
+      functionInput
       // {
       //   gasLimit: 300000,
       // }
@@ -92,8 +94,8 @@ export const createApplicationContract = async (contractInput) => {
 };
 
 export const loadWriteContract_a = async (contractAddress) => {
-  if (contractAddress === '') {
-    return;
+  if (!contractAddress) {
+    throw new Error('Contract address is required');
   }
   const signer = await provider.getSigner();
   console.log('!signer', signer);
@@ -103,7 +105,7 @@ export const loadWriteContract_a = async (contractAddress) => {
     abi_a,
     signer
   );
-  // console.log('load contract', applicationWriteContract);
+  console.log('!applicationWriteContract:', applicationWriteContract);
 
   return applicationWriteContract;
 };
