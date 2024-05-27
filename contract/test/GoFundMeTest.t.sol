@@ -68,7 +68,7 @@ contract GoFundMeTest is Test {
         fundMe.fund(usdcAmount);
         uint256 amountFunded = fundMe.getTotalBalance();
         assertEq(amountFunded, usdcAmount * Constants.USD_DECIMALS);
-        vm.prank(msg.sender);
+        vm.prank(aliceWithUsdc);
         fundMe.withdraw();
         uint256 amountFundedAfterWithdraw = fundMe.getTotalBalance();
         assertEq(amountFundedAfterWithdraw, 0);
