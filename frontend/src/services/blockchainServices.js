@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
-// import { abi } from './config.js';
+import { abi } from '../services/config.js';
+import { CONTRTACT_ADDRESS } from '../services/config.js';
 
 export const requestAccount = async () => {
   try {
@@ -13,6 +14,8 @@ export const requestAccount = async () => {
 };
 
 export const walletChecker = (errorMsg) => {
+  console.log('WalletChecker');
+
   if (!window.ethereum) {
     errorMsg =
       'Ethers.js: Web3 provider not found. Please install a wallet with Web3 support.';
@@ -22,31 +25,72 @@ export const walletChecker = (errorMsg) => {
   }
 };
 
-// export const loadReadContract = async (contractAddress) => {
-//   if (contractAddress === '') {
-//     return;
-//   }
+export const getAddress = async () => {
+  try {
+    const accountAdressArray = await window.ethereum.request({
+      method: 'eth_accounts',
+      params: [],
+    });
+    const accountAdress = accountAdressArray[0];
 
-//   const restaurantReadContract = new ethers.Contract(
-//     contractAddress,
-//     abi,
-//     window.provider
-//   );
+    return accountAdress;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-//   return restaurantReadContract;
-// };
+export const loadReadContract = async (contractAddress) => {
+  if (contractAddress === '') {
+    return;
+  }
 
-// export const loadWriteContract = async (contractAddress) => {
-//   if (contractAddress === '') {
-//     return;
-//   }
-//   const signer = await provider.getSigner();
+  const applicationReadContract = new ethers.Contract(
+    contractAddress,
+    abi,
+    window.provider
+  );
 
-//   const resturantWriteContract = new ethers.Contract(
-//     contractAddress,
-//     abi,
-//     signer
-//   );
+  return applicationReadContract;
+};
 
-//   return resturantWriteContract;
-// };
+export const loadWriteContract = async (contractAddress) => {
+  if (contractAddress === '') {
+    return;
+  }
+  const signer = await provider.getSigner();
+
+  const applicationWriteContract = new ethers.Contract(
+    contractAddress,
+    abi,
+    signer
+  );
+  console.log('load contract', applicationWriteContract);
+
+  return applicationWriteContract;
+};
+
+export const fetchApplicationContract = async () => {
+  try {
+    const contractAddress = CONTRTACT_ADDRESS;
+    const readContract = await loadReadContract(contractAddress);
+    return await readContract.projectName();
+  } catch (error) {
+    console.error('Error in fetching:', error);
+    throw error;
+  }
+};
+
+export const createApplicationContract = async (contractInput) => {
+  // try {
+  //   const { company, amount, deadline } = contractInput;
+  //   const contractAddress = CONTRTACT_ADDRESS;
+  //   const writeContract = await loadWriteContract(contractAddress);
+  //   const transaction = await writeContract.fund(company, amount, deadline);
+  //   const result = await transaction.wait();
+  //   console.log(result);
+  //   transaction;
+  // } catch (error) {
+  //   console.error('Error in createApplicationContract:', error);
+  //   throw error;
+  // }
+};
