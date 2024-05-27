@@ -39,6 +39,10 @@ contract HelperConfigUsdc is Script {
 
     function getAnvilUsdcConfig() public returns (NetworkConfig memory) {
         ERC20Mock USDC = new ERC20Mock();
+        USDC.mint(
+            0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
+            100 * Constants.USD_DECIMALS
+        );
 
         NetworkConfig memory anvilConfig = NetworkConfig({
             usdcTokenAddress: address(USDC)

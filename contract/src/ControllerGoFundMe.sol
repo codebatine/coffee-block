@@ -3,27 +3,20 @@
 pragma solidity ^0.8.18;
 
 import {GoFundMe} from "./UsdcGoFundMe.sol";
+import {DeployFundMe} from "../script/DeployGoFundMeUsdc.s.sol";
 
-contract DeployerGoFundMe {
+contract ControllerGoFundMe {
+    GoFundMe fundMe;
     GoFundMe[] public goFundMeProjects;
     uint256 projectCount;
 
-    constructor() {
-        //createNewProject(100, "First test project", 0x694AA1769357215DE4FAC081bf1f309aDC325306);
-    }
-
     function createNewProject(
         uint256 _goalInUsd,
-        string memory _projectName,
-        address _linkTokenAddress
+        string memory _projectName
     ) public {
-        GoFundMe goFundMe = new GoFundMe(
-            _goalInUsd,
-            _projectName,
-            _linkTokenAddress
-        );
-
-        goFundMeProjects.push(goFundMe);
+        DeployFundMe deployFundMe = new DeployFundMe();
+        fundMe = deployFundMe.run(_goalInUsd, _projectName);
+        goFundMeProjects.push(fundMe);
         projectCount++;
     }
 
