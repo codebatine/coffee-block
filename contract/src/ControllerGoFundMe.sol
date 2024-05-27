@@ -26,5 +26,5 @@ contract ControllerGoFundMe {
 
     function getProject(uint256 _index) public view returns (GoFundMe) {
         return goFundMeProjects[_index];
-    }
+    } // return a cortroct address from a index
 }
