@@ -2,6 +2,7 @@ import React from 'react'
 import { useState } from "react"
 import Application from "../../models/Application"
 import axios from 'axios';
+import { createApplicationContract } from '../../services/blockchainServices';
 
 export const Step2 = ({setContractStatus}) => {
 
@@ -12,17 +13,32 @@ export const Step2 = ({setContractStatus}) => {
     setContractInput(prev => ({...prev, [name]: value}))
   }
 
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(contractInput);
     try {
-      
+      const applicationContract = await createApplicationContract(contractInput)
       setContractStatus("Created")
+      console.log(applicationContract);
     } catch (error) {
-
+      console.log(error);
     }
   }
+
+  // const handleFetch = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const address = await getAddress();
+  //     console.log(address);
+  //     // const fetchedApplicationContract = await fetchApplicationContract(address)
+  //     const fetchedApplicationContract = await fetchApplicationContract()
+  //     setFetchStatus("fetched")
+  //     setFetchData(fetchedApplicationContract);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -34,10 +50,6 @@ export const Step2 = ({setContractStatus}) => {
       <div className="form-control">
         <label htmlFor="applyform-amount">Loan amount</label>
         <input type="text" id="applyform-amount" name="amount" onChange={handleSetContractInfo}></input>
-      </div>
-      <div className="form-control">
-        <label htmlFor="applyform-business-area">Deadline</label>
-        <input type="text" id="applyform-business-area" name="area" onChange={handleSetContractInfo}></input>
       </div>
       <div className="button-control">
         <button>Submit</button>

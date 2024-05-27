@@ -44,7 +44,8 @@ export const updateApplicationStatus = (req, res, next) => {
   }
 };
 
-const getApplication = (req, res, next) => {
+export const getApplication = (req, res, next) => {
+
   const application = applications.find((appli) => appli.id === req.params.id); 
 
   if (!application) {
@@ -54,4 +55,16 @@ const getApplication = (req, res, next) => {
   }
 
   return application;
+};
+
+export const listApplication = (req, res, next) => {
+  
+  const application = applications.find((appli) => appli.id === req.params.id); 
+
+  try {
+    res.send(application);
+  } catch (error) {
+    console.error('Error reading data', error);
+    res.status(500).send('Server error');
+  }
 };

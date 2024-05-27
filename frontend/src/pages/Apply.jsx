@@ -3,7 +3,9 @@ import { Step2 } from "../components/Apply/Step2"
 import { Step3 } from "../components/Apply/Step3"
 
 import { useState } from "react"
-import { requestAccount } from "../services/blockchainServices"
+import { requestAccount, walletChecker } from "../services/blockchainServices"
+
+
 
 
 
@@ -21,15 +23,14 @@ export const Apply = () => {
     if(response) {
       setConnected("true")
       setAddress(response)
+      // loadReadContract(CONTRTACT_ADDRESS)
+      // loadWriteContract(CONTRTACT_ADDRESS)
     }
   }
 
   const navigate = () => {
     alert("navigate function")
   }
-
-
-
 
   return (
     <div className="application-wrapper">
@@ -41,7 +42,9 @@ export const Apply = () => {
           <div>3. Input your business details.</div>
 
         <div className="button-control">
-          <button onClick={()=> setStep("step1")}>Start application process</button>
+          <button onClick={()=> {setStep("step1")
+            walletChecker();
+          }}>Start application process</button>
         </div>
 
         </div>
