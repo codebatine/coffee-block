@@ -12,6 +12,10 @@ library Constants {
 library ConstUsdctokenAddress {
     address public constant SEPOLIA =
         0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238;
+    address public constant AVALANCHE_FUJI =
+        0x5425890298aed601595a70AB815c96711a31Bc65;
+    address public constant POLYGON =
+        0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
     address public constant ETHEREUM =
         0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
 }
@@ -19,4 +23,6 @@ library ConstUsdctokenAddress {
 library ConstChainId {
     uint32 public constant SEPOLIA = 11155111;
     uint8 public constant ETHEREUM = 1;
+    uint32 public constant AVALANCHEFUJI = 43113;
+    uint32 public constant POLYGON = 137;
 }

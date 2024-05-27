@@ -14,13 +14,12 @@
  * This cotract will also use Chainlink pricefeed to get the price of the token that will be used to fund the campaign.
  */
 
-pragma solidity ^0.8.25;
+pragma solidity ^0.8.18;
 
 import {Constants} from "./constants/Constants.c.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {Script, console} from "forge-std/Script.sol";
 
-contract GoFundMe is Script {
+contract GoFundMe {
     error NotOwner();
     error NotEnoughFunds();
 
@@ -39,20 +38,22 @@ contract GoFundMe is Script {
         _;
     }
 
-    constructor(
-        uint256 _goalInUsd,
-        string memory _projectName,
-        address _usdcTokenAddress
-    ) {
-        i_owner = msg.sender;
-        goalInUsd = _goalInUsd * Constants.USD_DECIMALS; // 6 * 10 ** 6;
-        projectName = _projectName;
+    constructor(address _usdcTokenAddress, address _owner) {
+        i_owner = _owner;
         usdc = IERC20(_usdcTokenAddress); // IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238);
         usdcTokenAddress = _usdcTokenAddress;
     }
 
     event FundReceived(address indexed funder, uint256 amount);
     event FundsWithdrawn(address indexed owner, uint256 amount);
+
+    function SetNameAndGoal(
+        string memory _projectName,
+        uint256 _goalInUsd
+    ) public onlyOwner {
+        projectName = _projectName;
+        goalInUsd = _goalInUsd * Constants.USD_DECIMALS;
+    }
 
     function fund(uint256 _amount) public {
         uint256 amountInDecimals = _amount * Constants.USD_DECIMALS;

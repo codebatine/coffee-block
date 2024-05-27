@@ -26,7 +26,10 @@ contract GoFundMeTest is Test {
     function setUp() external {
         console.log("Deploying GoFundMe contract...");
         DeployFundMe deployFundme = new DeployFundMe();
-        fundMe = deployFundme.run(goal, FirstProjectName);
+        vm.prank(aliceWithUsdc);
+        fundMe = deployFundme.run(aliceWithUsdc);
+        vm.prank(aliceWithUsdc);
+        fundMe.SetNameAndGoal(FirstProjectName, goal);
         usdcTokenAddress = fundMe.getUsdAddress();
         usdcToken = IERC20(usdcTokenAddress);
         console.log("alice", aliceWithUsdc);
@@ -54,7 +57,7 @@ contract GoFundMeTest is Test {
     }
 
     function testBobIsOwner() public {
-        assertEq(fundMe.i_owner(), address(msg.sender));
+        assertEq(fundMe.i_owner(), address(aliceWithUsdc));
     }
 
     function testWithdraw() public {

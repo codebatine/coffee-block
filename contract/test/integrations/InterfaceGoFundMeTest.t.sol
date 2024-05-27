@@ -23,10 +23,12 @@ contract InterfaceGoFundMeTest is Test {
         //vm.deal(alice, 10 ether);
         //vm.prank(alice);
         deployer = new ControllerGoFundMe();
-        deployer.createNewProject(100, "Please give mee moonies");
+        vm.prank(alice);
+        deployer.createNewProject();
         firstProject = deployer.getProject(0);
         usdcTokenAddress = firstProject.getUsdAddress();
         usdcToken = IERC20(usdcTokenAddress);
+        vm.deal(alice, 10 ether);
     }
 
     function testUsdcAddress() public {
@@ -41,26 +43,26 @@ contract InterfaceGoFundMeTest is Test {
     }
 
     function testToCreateMultipleProjects() public {
-        deployer.createNewProject(100, "Please give mee moonies");
+        deployer.createNewProject();
         projectList = deployer.getProjectList();
 
         assertEq(projectList.length, 2);
     }
 
     function testToFundProject() public {
-        uint256 usdcAmount = 100 * 10 ** 6;
+        uint256 usdcAmount = 100;
 
         vm.prank(alice);
-        usdcToken.approve(address(firstProject), usdcAmount);
+        usdcToken.approve(address(firstProject), usdcAmount * 1e6);
         vm.prank(alice);
         firstProject.fund(usdcAmount);
         uint256 amountFunded = firstProject.getTotalBalance();
-        assertEq(amountFunded, usdcAmount);
+        assertEq(amountFunded, usdcAmount * 1e6);
     }
 
     function testAliceIsOwnerOfNewProject() public {
         vm.deal(alice, 10 ether);
-        deployer.createNewProject(100, "Alice Project");
+        deployer.createNewProject();
         GoFundMe aliceProject = deployer.getProject(0);
         address(aliceProject);
         address owner = aliceProject.getOwner();

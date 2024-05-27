@@ -10,12 +10,9 @@ contract ControllerGoFundMe {
     GoFundMe[] public goFundMeProjects;
     uint256 projectCount;
 
-    function createNewProject(
-        uint256 _goalInUsd,
-        string memory _projectName
-    ) public {
+    function createNewProject() public {
         DeployFundMe deployFundMe = new DeployFundMe();
-        fundMe = deployFundMe.run(_goalInUsd, _projectName);
+        fundMe = deployFundMe.run(msg.sender);
         goFundMeProjects.push(fundMe);
         projectCount++;
     }
@@ -26,5 +23,5 @@ contract ControllerGoFundMe {
 
     function getProject(uint256 _index) public view returns (GoFundMe) {
         return goFundMeProjects[_index];
-    } // return a cortroct address from a index
+    }
 }

@@ -18,6 +18,10 @@ contract HelperConfigUsdc is Script {
             activeNetworkConfig = getSepoliaUsdcConfig();
         } else if (block.chainid == ConstChainId.ETHEREUM) {
             activeNetworkConfig = getMainnetUsdcConfig();
+        } else if (block.chainid == ConstChainId.POLYGON) {
+            activeNetworkConfig = getPolygonUsdcConfig();
+        } else if (block.chainid == ConstChainId.AVALANCHEFUJI) {
+            activeNetworkConfig = getAvalancheFujiConfig();
         } else {
             activeNetworkConfig = getAnvilUsdcConfig();
         }
@@ -35,6 +39,24 @@ contract HelperConfigUsdc is Script {
             usdcTokenAddress: ConstUsdctokenAddress.ETHEREUM
         });
         return ethConfig;
+    }
+
+    function getPolygonUsdcConfig() public pure returns (NetworkConfig memory) {
+        NetworkConfig memory polygonConfig = NetworkConfig({
+            usdcTokenAddress: ConstUsdctokenAddress.POLYGON
+        });
+        return polygonConfig;
+    }
+
+    function getAvalancheFujiConfig()
+        public
+        pure
+        returns (NetworkConfig memory)
+    {
+        NetworkConfig memory avalancheConfig = NetworkConfig({
+            usdcTokenAddress: ConstUsdctokenAddress.AVALANCHE_FUJI
+        });
+        return avalancheConfig;
     }
 
     function getAnvilUsdcConfig() public returns (NetworkConfig memory) {
