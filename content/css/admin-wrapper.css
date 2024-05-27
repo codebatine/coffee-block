@@ -1,0 +1,29 @@
+.admin-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.admin-wrapper .application-admin-wrapper button {
+  margin: 5px;
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.application-admin-display {
+  border: 1px solid black;
+  margin: 5px;
+  padding: 5px;
+}
+.application-admin-display .admin-publish-buttons {
+  display: flex;
+  justify-content: end;
+}
+.application-admin-display .admin-publish-buttons .button-pub {
+  background-color: rgb(255, 141, 141);
+  cursor: pointer;
+}
+.application-admin-display .admin-publish-buttons .button-unpub {
+  background-color: rgb(112, 255, 112);
+  cursor: pointer;
+}

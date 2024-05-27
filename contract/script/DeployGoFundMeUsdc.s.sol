@@ -7,13 +7,18 @@ import {GoFundMe} from "../src/UsdcGoFundMe.sol";
 import {HelperConfigUsdc} from "./HelperConfigUsdc.s.sol";
 
 contract DeployFundMe is Script {
-    function run() external returns (GoFundMe) {
+    uint256 public constant DECIMALS_USDC = 10 ** 6;
+
+    function run(
+        uint256 goal,
+        string memory _projectName
+    ) public returns (GoFundMe) {
         HelperConfigUsdc helperConfig = new HelperConfigUsdc();
-        address usdcTokenAddress = helperConfig.activeNetworkConfig();
 
         vm.startBroadcast();
+        address usdcTokenAddress = helperConfig.activeNetworkConfig();
 
-        GoFundMe fundMe = new GoFundMe(usdcTokenAddress);
+        GoFundMe fundMe = new GoFundMe(goal, _projectName, usdcTokenAddress);
 
         vm.stopBroadcast();
         return fundMe;

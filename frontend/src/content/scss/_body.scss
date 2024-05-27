@@ -6,7 +6,6 @@ $color-cream-white: #f2e7d9;
 body {
   background: var(--main-bg-color);
   min-height: 100vh;
-  padding-top: 150px;
   background-image: linear-gradient(62deg, $color-cream 13%, #ffffff80 4%),
                     linear-gradient(44deg, $color-coffee 39%, rgba(242, 242, 242, 0.5) 18%),
                     linear-gradient(118deg, $color-cream 40%, rgba(247, 247, 247, 0.5) 54%),
@@ -16,9 +15,10 @@ body {
   background-repeat: no-repeat;
 }
 
-  a{
-    cursor: pointer;
-  } 
+a {
+  cursor: pointer;
+  font-family: "Josefin Sans", sans-serif;
+}
 
   .container {
     display: block;
@@ -76,7 +76,6 @@ a:hover {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
   transition: box-shadow 0.3s ease-in-out;
   position: relative;
-
   cursor: pointer;
 
 }

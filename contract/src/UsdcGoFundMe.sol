@@ -17,69 +17,88 @@
 pragma solidity ^0.8.25;
 
 import {Constants} from "./constants/Constants.c.sol";
-import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {Script, console} from "forge-std/Script.sol";
 
-error NotOwner();
+contract GoFundMe is Script {
+    error NotOwner();
+    error NotEnoughFunds();
 
-contract GoFundMe {
     IERC20 public usdc;
     string public projectName;
     uint256 public goalInUsd;
-    uint256 public totalBalance;
-    address[] public funders;
+    uint256 public totalBalance; // The total amount of funds that have been raised.
+    address[] public funders; // Creates a list of funderns that the frontend can use together with m_donations to display the funders and the amount they donated.
     address public immutable i_owner;
     address public usdcTokenAddress;
 
-    mapping(address => uint256) public m_donations;
+    mapping(address => uint256) public m_donations; // A mapping of the donations that have been made by the funders.
 
     modifier onlyOwner() {
         if (msg.sender != i_owner) revert NotOwner();
         _;
     }
 
-    constructor() {
+    constructor(
+        uint256 _goalInUsd,
+        string memory _projectName,
+        address _usdcTokenAddress
+    ) {
         i_owner = msg.sender;
-        goalInUsd = 6 * 10 ** 6;
-        projectName = "Help me to buy a new computer";
-        usdc = IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238);
+        goalInUsd = _goalInUsd * Constants.USD_DECIMALS; // 6 * 10 ** 6;
+        projectName = _projectName;
+        usdc = IERC20(_usdcTokenAddress); // IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238);
+        usdcTokenAddress = _usdcTokenAddress;
     }
 
     event FundReceived(address indexed funder, uint256 amount);
     event FundsWithdrawn(address indexed owner, uint256 amount);
 
-    function fund(uint256 _amount) public payable {
-        require(
-            _amount >= Constants.MINIMUM_USD,
-            "you need to send more than 5 USD"
-        );
+    function fund(uint256 _amount) public {
+        uint256 amountInDecimals = _amount * Constants.USD_DECIMALS;
 
         require(
-            usdc.transferFrom(msg.sender, address(this), _amount),
-            "Donation failed"
+            usdc.transferFrom(msg.sender, address(this), amountInDecimals),
+            "Transfer failed"
         );
 
-        m_donations[msg.sender] += _amount;
-        totalBalance += _amount;
+        m_donations[msg.sender] += amountInDecimals;
+        totalBalance += amountInDecimals;
         funders.push(msg.sender);
 
-        emit FundReceived(msg.sender, _amount);
+        emit FundReceived(msg.sender, amountInDecimals);
     }
 
     function withdraw() public onlyOwner {
         require(totalBalance >= goalInUsd, "Goal not reached");
 
-        for (
-            uint256 funderIndex = 0;
-            funderIndex < funders.length;
-            funderIndex++
-        ) {
-            address funder = funders[funderIndex];
-            m_donations[funder] = 0;
-        }
-        funders = new address[](0);
-        (bool callSuccess, ) = payable(msg.sender).call{
-            value: address(this).balance
-        }("");
-        require(callSuccess, "Call failed");
+        uint256 amount = usdc.balanceOf(address(this));
+        usdc.transfer(i_owner, amount);
+        totalBalance = 0;
+        emit FundsWithdrawn(i_owner, amount);
+    }
+
+    function getSignerUSDCBalance() public view returns (uint256) {
+        return usdc.balanceOf(msg.sender);
+    }
+
+    function getSignerUSDCAllowance() public view returns (uint256) {
+        return usdc.allowance(msg.sender, address(this));
+    }
+
+    function getUsdAddress() public view returns (address) {
+        return usdcTokenAddress;
+    }
+
+    function getFunder(uint256 i) public view returns (address) {
+        return funders[i];
+    }
+
+    function getTotalBalance() public view returns (uint256) {
+        return totalBalance;
+    }
+
+    function getOwner() public view returns (address) {
+        return i_owner;
     }
 }
