@@ -3,7 +3,7 @@ import { Step2 } from "../components/Apply/Step2"
 import { Step3 } from "../components/Apply/Step3"
 
 import { useState } from "react"
-import { loadReadContract, loadWriteContract, requestAccount, walletChecker } from "../services/blockchainServices"
+import { requestAccount, walletChecker } from "../services/blockchainServices"
 
 
 

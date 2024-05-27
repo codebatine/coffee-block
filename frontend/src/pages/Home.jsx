@@ -6,6 +6,7 @@ import coffee4 from '../content/img/coffee-4-grid.jpg';
 import coffee5 from '../content/img/coffee-5-grid.jpg';
 import coffee6 from '../content/img/coffee-6-grid.jpg';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 export const Home = () => {
 
@@ -39,7 +40,7 @@ export const Home = () => {
         {applications.length > 0 ? 
         <section>{applications.map((application, index) => application.published === "yes" && (
         <div key={application.id} className="grid-item">
-          <div className="img-container"><img src={images[index % images.length] || coffee1} alt="Coffee cup" /></div>
+          <Link to={`/coffeblock/details/${application.id}`}><div className="img-container"><img src={images[index % images.length] || coffee1} alt="Coffee cup" /></div></Link>
           <div className="caption"><h2>{application.company || "company missing"}</h2></div>
           <h2>{application.area || "area missing"}</h2>
           <p>{application.reason || "reason missing"}</p>

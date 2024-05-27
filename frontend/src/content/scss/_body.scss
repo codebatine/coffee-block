@@ -80,6 +80,24 @@ a:hover {
 
 }
 
+.grid-item-x {
+  flex: 0 0 100%;
+  margin: 0.5rem;
+  background: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.3s ease-in-out;
+  position: relative;
+
+  .img-container-x img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+
+
 .img-container {
   overflow: hidden;
   position: relative;

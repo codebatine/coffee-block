@@ -17,7 +17,7 @@ export const router = createBrowserRouter([
     children: [
       { path: "/coffeblock/", index: true, element: <Home /> },
       { path: "/coffeblock/viewall", element: <Viewall /> },
-      { path: "/coffeblock/details", element: <Details /> },
+      { path: "/coffeblock/details/:id", element: <Details /> },
       { path: "/coffeblock/loan", element: <Loan /> },
       { path: "/coffeblock/apply", element: <Apply /> },
       { path: "/coffeblock/about", element: <About /> },

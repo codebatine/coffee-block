@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from "react"
 import Application from "../../models/Application"
 import axios from 'axios';
-import { fetchApplicationContract, getAddress } from '../../services/blockchainServices';
+// import { fetchApplicationContract, getAddress } from '../../services/blockchainServices';
 
 export const Step3 = ({setInfoStatus}) => {
 
@@ -30,19 +30,19 @@ export const Step3 = ({setInfoStatus}) => {
     }
   }
 
-  const handleFetch = async (e) => {
-    e.preventDefault();
-    try {
-      const address = await getAddress();
-      console.log(address);
-      // const fetchedApplicationContract = await fetchApplicationContract(address)
-      const fetchedApplicationContract = await fetchApplicationContract()
-      setFetchStatus("fetched")
-      setFetchData(fetchedApplicationContract);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // const handleFetch = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const address = await getAddress();
+  //     console.log(address);
+  //     // const fetchedApplicationContract = await fetchApplicationContract(address)
+  //     const fetchedApplicationContract = await fetchApplicationContract()
+  //     setFetchStatus("fetched")
+  //     setFetchData(fetchedApplicationContract);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
   return (
     <>

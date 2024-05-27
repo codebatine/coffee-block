@@ -26,6 +26,20 @@ export const Step2 = ({setContractStatus}) => {
     }
   }
 
+  // const handleFetch = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const address = await getAddress();
+  //     console.log(address);
+  //     // const fetchedApplicationContract = await fetchApplicationContract(address)
+  //     const fetchedApplicationContract = await fetchApplicationContract()
+  //     setFetchStatus("fetched")
+  //     setFetchData(fetchedApplicationContract);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
   return (
     <form onSubmit={handleSubmit}>
         <h2>2. Create contract loan application</h2>
@@ -36,10 +50,6 @@ export const Step2 = ({setContractStatus}) => {
       <div className="form-control">
         <label htmlFor="applyform-amount">Loan amount</label>
         <input type="text" id="applyform-amount" name="amount" onChange={handleSetContractInfo}></input>
-      </div>
-      <div className="form-control">
-        <label htmlFor="applyform-business-area">Deadline</label>
-        <input type="text" id="applyform-business-area" name="area" onChange={handleSetContractInfo}></input>
       </div>
       <div className="button-control">
         <button>Submit</button>
