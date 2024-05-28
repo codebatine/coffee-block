@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { CONTRTACT_ADDRESS_A, FUJI_CONTRACT_ADDRESS, abi_a } from './config.js';
+import { FUJI_CONTRACT_ADDRESS, abi_a, abi_b } from './config.js';
 
 export const requestAccount = async () => {
   try {
@@ -36,30 +36,34 @@ export const getAddress = async () => {
   }
 };
 
+// APPLICATIONS FUNCTIONS
+
+//fetch application
+
+export const fetchApplicationContract = async () => {
+  try {
+    const contractAddress = 'from database?';
+    const readContract = await loadReadContract(contractAddress);
+    return await readContract.projectName();
+  } catch (error) {
+    console.error('Error in fetching:', error);
+    throw error;
+  }
+};
+
 export const loadReadContract = async (contractAddress) => {
   if (contractAddress === '') {
     return;
   }
-
   const applicationReadContract = new ethers.Contract(
     contractAddress,
-    abi_a,
+    abi_b,
     window.provider
   );
-
   return applicationReadContract;
 };
 
-// export const fetchApplicationContract = async () => {
-//   try {
-//     const contractAddress = CONTRTACT_ADDRESS_A;
-//     const readContract = await loadReadContract(contractAddress);
-//     return await readContract.projectName();
-//   } catch (error) {
-//     console.error('Error in fetching:', error);
-//     throw error;
-//   }
-// };
+//create application
 
 export const createApplicationContract = async (contractInput) => {
   try {
@@ -87,6 +91,7 @@ export const createApplicationContract = async (contractInput) => {
 
     const result = await transaction.wait();
     console.log(result);
+    return result;
   } catch (error) {
     console.error('Error in createApplicationContract:', error);
     throw error;
@@ -108,4 +113,35 @@ export const loadWriteContract_a = async (contractAddress) => {
   console.log('!applicationWriteContract:', applicationWriteContract);
 
   return applicationWriteContract;
+};
+
+// fetch hash info
+
+export const getTransactionDetails = async (hash) => {
+  try {
+    // Fetch transaction receipt
+    const receipt = await provider.getTransactionReceipt(hash);
+    console.log('Receipt:', receipt);
+    // Decode logs
+    const logs = receipt.logs;
+    console.log('logs', logs);
+
+    const eventInterface = new ethers.utils.Interface(abi_a);
+
+    logs.forEach((log) => {
+      try {
+        const decodedLog = eventInterface.parseLog(log);
+        if (decodedLog.name === 'ProjectCreated') {
+          console.log(
+            'New Contract Address:',
+            decodedLog.args.newProjectAddress
+          );
+        }
+      } catch (error) {
+        // Ignore log entries that can't be decoded
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching transaction receipt and logs:', error);
+  }
 };

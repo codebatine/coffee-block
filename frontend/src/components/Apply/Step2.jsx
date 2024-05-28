@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from "react"
 import Application from "../../models/Application"
 import axios from 'axios';
-import { createApplicationContract } from '../../services/blockchainServices';
+import { createApplicationContract, getTransactionDetails } from '../../services/blockchainServices';
 
 export const Step2 = ({setContractStatus}) => {
 
@@ -19,13 +19,34 @@ export const Step2 = ({setContractStatus}) => {
     console.log(contractInput);
     try {
       const applicationContract = await createApplicationContract(contractInput)
-      setContractStatus("Created")
-      console.log(applicationContract);
+      
+      databaseInput(contractInput, applicationContract)
     } catch (error) {
       console.log(error);
     }
   }
 
+  const databaseInput = async (contractInput, applicationContract) => {
+
+    const {company, amount} = contractInput
+    const data = new Application();
+    data.company = company;
+    data.amount = amount;
+    data.index = "0";
+    data.owner = applicationContract.from;
+
+    const txData = getTransactionDetails(applicationContract.hash)
+
+    console.log("txData", txData);
+
+    try {
+      const response = await axios.post('http://localhost:3001/api/v1/applications/submit', data);
+      console.log(response.data);
+      setContractStatus("Created")
+    } catch (error) {
+      console.error('There was an error submitting the form!', error);
+    }
+  }
   // const handleFetch = async (e) => {
   //   e.preventDefault();
   //   try {

@@ -17,6 +17,14 @@
     div{
       padding: 3px;
     }
+
+    .inline-button{
+      border: 1px solid black;
+      height: 20px;
+      padding: 5px;
+      background-color: rgb(167, 225, 243);
+      cursor: pointer;
+    }
   }
 
   .step1, .step2, .step3{
