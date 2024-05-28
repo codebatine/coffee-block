@@ -39,7 +39,7 @@ export const Apply = () => {
           <h2>The application process is a three step process:</h2>
           <div>1. Connect your wallet to log in.</div>
           <div>2. Create a contract for your application.</div>
-          <div>3. Input your business details.</div>
+          <div>3. Input your business details.<button className="inline-button" onClick={()=> setStep("step3")}>Go to step 3</button></div>
 
         <div className="button-control">
           <button onClick={()=> {setStep("step1")
