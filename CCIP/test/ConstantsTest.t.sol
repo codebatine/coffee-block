@@ -20,10 +20,20 @@ contract ConstantsTest is Test {
         assertEq(selectors[6], 16281711391670634445);
     }
 
-    function testForLoop() external {
+    function testForLoop() external view {
         uint256[] memory selectors = ChainSelectors.getSelectors();
         for (uint256 i = 0; i < selectors.length; i++) {
             console.logUint(selectors[i]);
         }
+    }
+
+    function testIfChainIsNotFoundReturn() external pure {
+        bool result = ChainSelectors.verifyChainSelector(129087398);
+        assertEq(result, false);
+    }
+
+    function testIfChainIsFoundReturnTrue() external pure {
+        bool result = ChainSelectors.verifyChainSelector(14767482510784806043);
+        assertEq(result, true);
     }
 }

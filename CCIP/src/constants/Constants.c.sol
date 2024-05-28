@@ -21,4 +21,16 @@ library ChainSelectors {
         selectors[6] = SELECTOR7;
         return selectors;
     }
+
+    function verifyChainSelector(
+        uint256 _selector
+    ) external pure returns (bool) {
+        uint256[] memory selectors = getSelectors();
+        for (uint256 i = 0; i < selectors.length; i++) {
+            if (selectors[i] == _selector) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
