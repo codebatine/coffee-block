@@ -10,11 +10,15 @@ contract ControllerGoFundMe {
     GoFundMe[] public goFundMeProjects;
     uint256 projectCount;
 
+    event ProjectCreated(address indexed _owner, GoFundMe _project);
+
     function createNewProject() public {
         DeployFundMe deployFundMe = new DeployFundMe();
         fundMe = deployFundMe.run(msg.sender);
         goFundMeProjects.push(fundMe);
         projectCount++;
+
+        emit ProjectCreated(msg.sender, fundMe);
     }
 
     function getProjectList() public view returns (GoFundMe[] memory) {
