@@ -8,6 +8,7 @@ import {DeployFundMe} from "../script/DeployGoFundMeUsdc.s.sol";
 contract ControllerGoFundMe {
     GoFundMe fundMe;
     GoFundMe[] public goFundMeProjects;
+
     uint256 public projectCount = 0;
 
     event ProjectCreated(address indexed _owner, GoFundMe _project);

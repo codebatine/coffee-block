@@ -22,6 +22,8 @@ contract HelperConfigUsdc is Script {
             activeNetworkConfig = getPolygonUsdcConfig();
         } else if (block.chainid == ConstChainId.AVALANCHEFUJI) {
             activeNetworkConfig = getAvalancheFujiConfig();
+        } else if (block.chainid == ConstChainId.POLYGON_AMOY) {
+            activeNetworkConfig = getPolygonTestUsdcConfig();
         } else {
             activeNetworkConfig = getAnvilUsdcConfig();
         }
@@ -57,6 +59,17 @@ contract HelperConfigUsdc is Script {
             usdcTokenAddress: ConstUsdctokenAddress.AVALANCHE_FUJI
         });
         return avalancheConfig;
+    }
+
+    function getPolygonTestUsdcConfig()
+        public
+        pure
+        returns (NetworkConfig memory)
+    {
+        NetworkConfig memory polygonAmoyConfig = NetworkConfig({
+            usdcTokenAddress: ConstUsdctokenAddress.POLYGON_AMOY
+        });
+        return polygonAmoyConfig;
     }
 
     function getAnvilUsdcConfig() public returns (NetworkConfig memory) {

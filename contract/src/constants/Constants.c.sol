@@ -18,6 +18,8 @@ library ConstUsdctokenAddress {
         0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
     address public constant ETHEREUM =
         0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+    address public constant POLYGON_AMOY =
+        0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582;
 }
 
 library ConstChainId {
@@ -25,4 +27,5 @@ library ConstChainId {
     uint8 public constant ETHEREUM = 1;
     uint32 public constant AVALANCHEFUJI = 43113;
     uint32 public constant POLYGON = 137;
+    uint32 public constant POLYGON_AMOY = 80002;
 }
