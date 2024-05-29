@@ -1,6 +1,8 @@
 import { ethers } from 'ethers';
 import { FUJI_CONTRACT_ADDRESS, abi_a, abi_b } from './config.js';
 
+// WALLET FUNCTIONS
+
 export const requestAccount = async () => {
   try {
     const result = await window.ethereum.request({
@@ -36,7 +38,98 @@ export const getAddress = async () => {
   }
 };
 
-// APPLICATIONS FUNCTIONS
+// CONTRACT FUNCTIONS
+
+// create contract
+
+export const createContract = async () => {
+  try {
+    const contractAddress = FUJI_CONTRACT_ADDRESS;
+    const writeContract = await loadWriteContract_a(contractAddress);
+    console.log('!writeContract:', writeContract);
+
+    const transaction = await writeContract.createNewProject();
+    console.log('!transaction:', transaction);
+
+    const result = await transaction.wait();
+    console.log(result);
+    // const txDetails = await getTransactionDetails(result.hash);
+    // console.log('!txDetails', txDetails);
+    // const fetchedContract = await fetchContractAddress();
+    // console.log(fetchedContract);
+
+    // const contract = await writeContract.on('ProjectCreated', (owner, project));
+    // console.log(contract);
+
+    // Skapa en kontraktsinstans
+    const signer = await getAddress();
+    // const contract = new ethers.Contract(contractAddress, abi_a, signer);
+
+    // // Lyssna på ProjectCreated-eventet
+    // contract.on('ProjectCreated', (owner, project) => {
+    //   console.log(
+    //     `New project created by ${owner}. Project address: ${project}`
+    //   );
+    // });
+
+    const projectList = await writeContract.getProjectList();
+    console.log('!projectlist', Object.values(projectList));
+
+    const owner = Object.values(projectList).forEach(async (project) => {
+      const writeContract_b = await loadWriteContract_b(project);
+      const projectOwner = await writeContract_b.getOwner();
+      let projects = [];
+      if (signer === projectOwner) {
+        projects.push(project);
+      }
+      return projects;
+    });
+
+    console.log(owner);
+  } catch (error) {
+    console.error('Error in createApplicationContract:', error);
+    throw error;
+  }
+};
+
+export const loadWriteContract_a = async (contractAddress) => {
+  if (!contractAddress) {
+    throw new Error('Contract address is required');
+  }
+  const signer = await provider.getSigner();
+  console.log('!signer', signer);
+
+  const applicationWriteContract = new ethers.Contract(
+    contractAddress,
+    abi_a,
+    signer
+  );
+  // console.log('!applicationWriteContract:', applicationWriteContract);
+
+  return applicationWriteContract;
+};
+
+export const loadWriteContract_b = async (contractAddress) => {
+  if (!contractAddress) {
+    throw new Error('Contract address is required');
+  }
+
+  const applicationWriteContract = new ethers.Contract(contractAddress, abi_b);
+  // console.log('!applicationWriteContract:', applicationWriteContract);
+
+  return applicationWriteContract;
+};
+
+export const fetchContractAddress = async () => {
+  const contractAddress = FUJI_CONTRACT_ADDRESS;
+  try {
+    const readContract = await loadWriteContract_a(contractAddress);
+    return await readContract.ProjectCreated();
+  } catch (error) {
+    console.error('Error in fetching:', error);
+    throw error;
+  }
+};
 
 //fetch application
 
@@ -98,22 +191,24 @@ export const createApplicationContract = async (contractInput) => {
   }
 };
 
-export const loadWriteContract_a = async (contractAddress) => {
-  if (!contractAddress) {
-    throw new Error('Contract address is required');
-  }
-  const signer = await provider.getSigner();
-  console.log('!signer', signer);
+// export const loadWriteContract_a = async (contractAddress) => {
+//   if (!contractAddress) {
+//     throw new Error('Contract address is required');
+//   }
+//   const signer = await provider.getSigner();
+//   console.log('!signer', signer);
 
-  const applicationWriteContract = new ethers.Contract(
-    contractAddress,
-    abi_a,
-    signer
-  );
-  console.log('!applicationWriteContract:', applicationWriteContract);
+//   const applicationWriteContract = new ethers.Contract(
+//     contractAddress,
+//     abi_a,
+//     signer
+//   );
+//   console.log('!applicationWriteContract:', applicationWriteContract);
 
-  return applicationWriteContract;
-};
+//   return applicationWriteContract;
+// };
+
+// TRANSACTION INFO
 
 // fetch hash info
 

@@ -1,5 +1,5 @@
 export default class Application {
-  constructor (company, amount, index, owner, area, reason, time, name, email, date, published){
+  constructor (company, amount, index, owner, area, reason, time, name, email, lastUpdate, published){
     this.company = company || "company";
     this.amount = amount || "amount";
     this.index = index || "index"
@@ -9,7 +9,7 @@ export default class Application {
     this.time = time || "time";
     this.name = name || "name";
     this.email = email || "email";
-    this.date = date;
+    this.lastUpdate = lastUpdate;
     this.published = published || "no";
   }
 }
