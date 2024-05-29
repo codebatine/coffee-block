@@ -107,8 +107,10 @@ export const createContract = async () => {
     }
 
     const newestProject = projects.at(-1);
+    const projectIndex = projects.length + 1;
     console.log('!newestProject:', newestProject);
 
+    return { newestProject, projectIndex, signer };
     //const projectCount = await loadReadContract(
     //FUJI_CONTRACT_ADDRESS,
     //).projectCount();
