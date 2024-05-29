@@ -30,6 +30,7 @@ contract GoFundMe {
     address[] public funders; // Creates a list of funderns that the frontend can use together with m_donations to display the funders and the amount they donated.
     address public immutable i_owner;
     address public usdcTokenAddress;
+    bool public hasBeenSet;
 
     mapping(address => uint256) public m_donations; // A mapping of the donations that have been made by the funders.
 
@@ -42,6 +43,7 @@ contract GoFundMe {
         i_owner = _owner;
         usdc = IERC20(_usdcTokenAddress); // IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238);
         usdcTokenAddress = _usdcTokenAddress;
+        hasBeenSet = false;
     }
 
     event FundReceived(address indexed funder, uint256 amount);
@@ -51,8 +53,10 @@ contract GoFundMe {
         string memory _projectName,
         uint256 _goalInUsd
     ) public onlyOwner {
+        require(!hasBeenSet, "Name and goal has already been set");
         projectName = _projectName;
         goalInUsd = _goalInUsd * Constants.USD_DECIMALS;
+        hasBeenSet = true;
     }
 
     function fund(uint256 _amount) public {

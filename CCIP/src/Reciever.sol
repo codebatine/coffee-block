@@ -7,6 +7,7 @@ import {CCIPReceiver} from "@chainlink/contracts-ccip/src/v0.8/ccip/applications
 import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
 import {EnumerableMap} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/utils/structs/EnumerableMap.sol";
+import {ChainSelectors} from "./constants/Constants.c.sol";
 
 /**
  * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
@@ -20,7 +21,6 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
     using EnumerableMap for EnumerableMap.Bytes32ToUintMap;
 
     error InvalidUsdcToken(); // Used when the usdc token address is 0
-    error InvalidStaker(); // Used when the staker address is 0
     error InvalidSourceChain(); // Used when the source chain is 0
     error InvalidSenderAddress(); // Used when the sender address is 0
     error NoSenderOnSourceChain(uint64 sourceChainSelector); // Used when there is no sender for a given source chain
@@ -58,7 +58,6 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
     }
 
     IERC20 private immutable i_usdcToken;
-    address private immutable i_staker;
 
     // Mapping to keep track of the sender contract per source chain.
     mapping(uint64 => address) public s_senders;
@@ -71,8 +70,10 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
 
     modifier validateSourceChain(uint64 _sourceChainSelector) {
         if (_sourceChainSelector == 0) revert InvalidSourceChain();
+        if (!ChainSelectors.verifyChainSelector(_sourceChainSelector))
+            revert InvalidSourceChain();
         _;
-    } // Kan man skapa en array av ChainSeletorer som den loopar igenom?
+    }
 
     /// @dev Modifier to allow only the contract itself to execute a function. e
     /// Throws an exception if called by any account other than the contract itself.
@@ -81,20 +82,10 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
         _;
     }
 
-    /// @notice Constructor initializes the contract with the router address.
-    /// @param _router The address of the router contract.
-    /// @param _usdcToken The address of the usdc contract.
-    /// @param _staker The address of the staker contract.
-    constructor(
-        address _router,
-        address _usdcToken,
-        address _staker
-    ) CCIPReceiver(_router) {
+    constructor(address _router, address _usdcToken) CCIPReceiver(_router) {
         if (_usdcToken == address(0)) revert InvalidUsdcToken();
-        if (_staker == address(0)) revert InvalidStaker();
+        // if (_controller == address(0)) revert InvalidController();
         i_usdcToken = IERC20(_usdcToken);
-        i_staker = _staker;
-        i_usdcToken.safeApprove(_staker, type(uint256).max);
     }
 
     /// @dev Set the sender contract for a given source chain.
@@ -170,7 +161,7 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
                 any2EvmMessage.destTokenAmounts[0].token
             );
 
-        (bool success, bytes memory returnData) = i_staker.call(
+        (bool success, bytes memory returnData) = i_controller.call(
             any2EvmMessage.data
         ); // low level call to the staker contract using the encoded function selector and arguments
         if (!success) revert CallToStakerFailed();
