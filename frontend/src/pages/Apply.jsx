@@ -5,11 +5,13 @@ import { Step3 } from "../components/Apply/Step3"
 import { useState } from "react"
 import { requestAccount, walletChecker } from "../services/blockchainServices"
 
-
+import { useNavigate } from 'react-router-dom';
 
 
 
 export const Apply = () => {
+
+  const navigate = useNavigate();
 
   const [step, setStep] = useState("step0");
 
@@ -17,6 +19,7 @@ export const Apply = () => {
   const [address, setAddress] = useState("");
   const [contractStatus, setContractStatus] = useState("Not created")
   const [infoStatus, setInfoStatus] = useState("Not submitted")
+  const [projectId, setProjectId] = useState("")
 
   const connectWallet = async () => {
     const response = await requestAccount();
@@ -28,8 +31,8 @@ export const Apply = () => {
     }
   }
 
-  const navigate = () => {
-    alert("navigate function")
+  const handleNavigate = () => {
+    navigate(`/coffeblock/details/${projectId}`);
   }
 
   return (
@@ -61,7 +64,7 @@ export const Apply = () => {
       )}
             {step === "step2" && (
       <div className="step2">
-        <Step2 setContractStatus={setContractStatus}/>
+        <Step2 setContractStatus={setContractStatus} contractStatus={contractStatus}/>
         {contractStatus === "Created" &&
         <div className="button-control">
           <button onClick={()=> setStep("step3")}>Go to step 3</button>
@@ -71,10 +74,10 @@ export const Apply = () => {
             )}
             {step === "step3" && (
       <div className="step3">
-        <Step3 setInfoStatus={setInfoStatus}/>
+        <Step3 setInfoStatus={setInfoStatus} infoStatus={infoStatus} setProjectId={setProjectId}/>
         {infoStatus === "Submitted" &&
         <div className="button-control">
-        <button onClick={navigate}>View your application</button>
+        <button onClick={handleNavigate}>View your application</button>
         </div>
 }
       </div>
