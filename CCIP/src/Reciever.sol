@@ -8,6 +8,7 @@ import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-sol
 import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
 import {EnumerableMap} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/utils/structs/EnumerableMap.sol";
 import {ChainSelectors} from "./constants/Constants.c.sol";
+import {IControllerGoFundMe} from "../interface/IControllerGoFundMe.i.sol";
 
 /**
  * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
@@ -21,6 +22,7 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
     using EnumerableMap for EnumerableMap.Bytes32ToUintMap;
 
     error InvalidUsdcToken(); // Used when the usdc token address is 0
+    error InvalidController(); // Used when the controller address is 0
     error InvalidSourceChain(); // Used when the source chain is 0
     error InvalidSenderAddress(); // Used when the sender address is 0
     error NoSenderOnSourceChain(uint64 sourceChainSelector); // Used when there is no sender for a given source chain
@@ -58,6 +60,8 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
     }
 
     IERC20 private immutable i_usdcToken;
+    IControllerGoFundMe private immutable i_controller;
+    IGoFundMe private immutable i_gofundme;
 
     // Mapping to keep track of the sender contract per source chain.
     mapping(uint64 => address) public s_senders;
@@ -82,10 +86,16 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
         _;
     }
 
-    constructor(address _router, address _usdcToken) CCIPReceiver(_router) {
+    constructor(
+        address _router,
+        address _usdcToken,
+        address _controller
+    ) CCIPReceiver(_router) {
         if (_usdcToken == address(0)) revert InvalidUsdcToken();
-        // if (_controller == address(0)) revert InvalidController();
+        if (_controller == address(0)) revert InvalidController();
         i_usdcToken = IERC20(_usdcToken);
+        i_controller = IControllerGoFundMe(_controller);
+        i_usdcToken.safeApprove(address(i_controller), type(uint256).max);
     }
 
     /// @dev Set the sender contract for a given source chain.
