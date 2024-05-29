@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from "react"
 import Application from "../../models/Application"
 import axios from 'axios';
-import { createApplicationContract, getTransactionDetails } from '../../services/blockchainServices';
+import { createApplicationContract, createContract, getTransactionDetails } from '../../services/blockchainServices';
 
 export const Step2 = ({setContractStatus}) => {
 
@@ -11,6 +11,16 @@ export const Step2 = ({setContractStatus}) => {
   const handleSetContractInfo = (e) => {
     const { name, value} = e.target
     setContractInput(prev => ({...prev, [name]: value}))
+  }
+
+  const handleClick = async (e) => {
+    e.preventDefault();
+    try {
+      const contract = await createContract();
+      
+    } catch (error) {
+      
+    }
   }
 
 
@@ -62,8 +72,13 @@ export const Step2 = ({setContractStatus}) => {
   // }
 
   return (
+    <>
+        <h2>2.1 Create contract</h2>
+      <div className="button-control">
+        <button onClick={handleClick}>Create</button>
+      </div>
     <form onSubmit={handleSubmit}>
-        <h2>2. Create contract loan application</h2>
+        <h2>2.2 Specify contract details</h2>
       <div className="form-control">
         <label htmlFor="applyform-company-name">Company name</label>
         <input type="text" id="applyform-company-name" name="company" onChange={handleSetContractInfo}></input>
@@ -76,5 +91,6 @@ export const Step2 = ({setContractStatus}) => {
         <button>Submit</button>
       </div>
     </form>
+    </>
   )
 }

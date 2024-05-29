@@ -1,46 +1,78 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from "react"
 import Application from "../../models/Application"
 import axios from 'axios';
 import { fetchApplicationContract, getAddress } from '../../services/blockchainServices';
+import { dataLength } from 'ethers';
 
 export const Step3 = ({setInfoStatus}) => {
 
   const [form, setForm] = useState(new Application())
   const [fetchStatus, setFetchStatus] = useState("Not fetched")
-  const [fetchData, setFetchData] = useState("")
+  const [applications, setApplications] = useState("")
+  const [selectedId, setSelectedId] = useState("")
+
 
   const handleSetForm = (e) => {
-    const { name, value} = e.target
+    const { name, value } = e.target
+    const id = e.target.selectedOptions[0].getAttribute("data-id")
     setForm(prevForm => ({...prevForm, [name]: value}))
+    if(e.target.name === "company"){
+      setSelectedId(id)
+    }
   }
 
-  
+  useEffect(() => {
+    if(!selectedId) {return} else{
+    const application = applications.find((c) => {console.log(c.id, selectedId); return c.id === selectedId})
+    setForm(prevForm => ({...prevForm, amount: application.amount}))
+  }
+  }, [form.company])
+
+  const handleFetch = async (e) => {
+  e.preventDefault();
+    try {
+    const response = await axios.get("http://localhost:3001/api/v1/applications/", "utf-8");
+    const address = await getAddress();
+    const startedApplications = response.data.filter((c) => { return c.owner.trim().toLowerCase() === address.trim().toLowerCase()});
+    setApplications(startedApplications)
+    setFetchStatus("fetched")
+    } catch {
+      throw ("error")
+    }
+  }
+
+  // const handleFetch = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     // const address = await getAddress();
+  //     // console.log(address);
+  //     // // const fetchedApplicationContract = await fetchApplicationContract(address)
+  //     // const fetchedApplicationContract = await fetchApplicationContract()
+  //     setFetchStatus("fetched")
+  //     // setFetchData(fetchedApplicationContract);
+  //     contractData("fetchedApplicationContract");
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
+  // const contractData = (data) => {
+  //   setContractAddress(data.address || "null")
+  //   setProjectName(data.name || "null")
+  // }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    form.date = Date.now();
+    form.lastUpdate = Date.now();
     form.published = "no";
-    
+      
     try {
-      const response = await axios.post('http://localhost:3001/api/v1/applications/submit', form);
+      const response = await axios.put(`http://localhost:3001/api/v1/applications/change/${contractAddress}`, form);
       console.log(response.data);
       setInfoStatus("Submitted")
     } catch (error) {
       console.error('There was an error submitting the form!', error);
-    }
-  }
-
-  const handleFetch = async (e) => {
-    e.preventDefault();
-    try {
-      const address = await getAddress();
-      console.log(address);
-      // const fetchedApplicationContract = await fetchApplicationContract(address)
-      const fetchedApplicationContract = await fetchApplicationContract()
-      setFetchStatus("fetched")
-      setFetchData(fetchedApplicationContract);
-    } catch (error) {
-      console.log(error);
     }
   }
 
@@ -52,18 +84,19 @@ export const Step3 = ({setInfoStatus}) => {
       </div>
     {fetchStatus === "fetched" &&
     <form onSubmit={handleSubmit}>
+
       <div className="form-control">
         <label htmlFor="applyform-company-name">Company name</label>
         <select id="applyform-company-name" name="company" onChange={handleSetForm}>
-          <option>{fetchData}</option>
-          <option>Company name for contract 2</option>
-          <option>Company name for contract 3</option>
+          <option defaultValue>Choose company</option>
+          {applications.map((application) => <option key={application.id} data-id={application.id}>{application.company}</option>)}
         </select>
         {/* <input type="text" id="applyform-company-name" name="company" onChange={handleSetForm}></input> */}
       </div>
+
       <div className="form-control">
         <label htmlFor="applyform-amount">Loan amount</label>
-        <input type="text" id="applyform-amount" name="amount" onChange={handleSetForm}></input>
+        <input type="text" id="applyform-amount" name="amount" readOnly value={form.amount || "loading"}></input>
       </div>
       <div className="form-control">
         <label htmlFor="applyform-business-area">Business area</label>
