@@ -16,14 +16,24 @@ contract HelperConfig is Script {
     constructor() {
         if (block.chainid == ChainIDTestnet.AVALANCHE) {
             networkConfig = getAvalancheConfig();
+        } else if (block.chainid == ChainIDTestnet.POLYGON) {
+            networkConfig = getPolygonConfig();
         }
     }
 
     function getAvalancheConfig() public pure returns (NetworkConfig memory) {
         NetworkConfig memory avalanceConfig = NetworkConfig({
-            router: RouterTestnet.AVALANCE,
+            router: RouterTestnet.AVALANCHE,
             usdcAddress: USDCAddressTestnet.AVALANCHE
         });
         return avalanceConfig;
+    }
+
+    function getPolygonConfig() public pure returns (NetworkConfig memory) {
+        NetworkConfig memory polygonConfig = NetworkConfig({
+            router: RouterTestnet.POLYGON,
+            usdcAddress: USDCAddressTestnet.POLYGON
+        });
+        return polygonConfig;
     }
 }

@@ -2,4 +2,6 @@
 
 pragma solidity ^0.8.19;
 
-interface IGoFundMe {}
+interface IGoFundMe {
+    function fund(uint256 _amount) external;
+}
