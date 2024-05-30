@@ -38,7 +38,7 @@ export const Home = () => {
       <div className="grid-container">
 
         {applications.length > 0 ? 
-        <section>{applications.map((application, index) => application.published === "yes" && (
+        <>{applications.map((application, index) => application.published === "yes" && (
         <div key={application.id} className="grid-item">
           <Link to={`/coffeblock/details/${application.id}`}><div className="img-container"><img src={images[index % images.length] || coffee1} alt="Coffee cup" /></div></Link>
           <div className="caption"><h2>{application.company || "company missing"}</h2></div>
@@ -49,7 +49,7 @@ export const Home = () => {
           <div>{application.date || "date missing"}</div> */}
         </div>)
         
-      )}</section>
+      )}</>
         :
         <div>Inga applikationer funna</div>
         }

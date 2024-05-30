@@ -7,8 +7,6 @@ import { requestAccount, walletChecker } from "../services/blockchainServices"
 
 import { useNavigate } from 'react-router-dom';
 
-
-
 export const Apply = () => {
 
   const navigate = useNavigate();
@@ -42,12 +40,10 @@ export const Apply = () => {
           <h2>The application process is a three step process:</h2>
           <div>1. Connect your wallet to log in.</div>
           <div>2. Create a contract for your application.</div>
-          <div>3. Input your business details.<button className="inline-button" onClick={()=> setStep("step3")}>Go to step 3</button></div>
+          <div>3. Input your business details.<button className="application-button inline-button" onClick={()=> setStep("step3")}>Go to step 3</button></div>
 
         <div className="button-control">
-          <button onClick={()=> {setStep("step1")
-            walletChecker();
-          }}>Start application process</button>
+          <button className="application-button" onClick={()=> {setStep("step1"); walletChecker();}}>Start application process</button>
         </div>
 
         </div>
@@ -57,32 +53,31 @@ export const Apply = () => {
         <Step1 connected={connected} connectWallet={connectWallet} address={address}/>
         {address && 
         <div className="button-control">
-        <button onClick={()=> setStep("step2")}>Go to step 2</button>
+        <button className="application-button" onClick={()=> setStep("step2")}>Go to step 2</button>
         </div>
                 }
       </div>
       )}
-            {step === "step2" && (
+      {step === "step2" && (
       <div className="step2">
         <Step2 setContractStatus={setContractStatus} contractStatus={contractStatus}/>
         {contractStatus === "Created" &&
         <div className="button-control">
-          <button onClick={()=> setStep("step3")}>Go to step 3</button>
+          <button className="application-button" onClick={()=> setStep("step3")}>Go to step 3</button>
         </div>
         }
       </div>
-            )}
-            {step === "step3" && (
+      )}
+      {step === "step3" && (
       <div className="step3">
         <Step3 setInfoStatus={setInfoStatus} infoStatus={infoStatus} setProjectId={setProjectId}/>
         {infoStatus === "Submitted" &&
         <div className="button-control">
-        <button onClick={handleNavigate}>View your application</button>
+        <button className="application-button" onClick={handleNavigate}>View your application</button>
         </div>
-}
+      }
       </div>
-            )}
-      
+      )}
     </div>
   )
 }
