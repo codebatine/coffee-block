@@ -6,18 +6,7 @@ import {OwnerIsCreator} from "@chainlink/contracts-ccip/src/v0.8/shared/access/O
 import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
 import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
-
-/**
- * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
- * THIS IS AN EXAMPLE CONTRACT THAT USES UN-AUDITED CODE.
- * DO NOT USE THIS CODE IN PRODUCTION.
- */
-
-interface IStaker {
-    function stake(address beneficiary, uint256 amount) external;
-
-    function redeem() external;
-}
+import {IControllerGoFundMe} from "../interface/IControllerGoFundMe.i.sol";
 
 /// @title - A simple messenger contract for transferring tokens to a receiver  that calls a staker contract.
 contract Sender is OwnerIsCreator {
@@ -52,9 +41,7 @@ contract Sender is OwnerIsCreator {
     IERC20 private immutable i_linkToken;
     IERC20 private immutable i_usdcToken;
 
-    // Mapping to keep track of the receiver contract per destination chain.
     mapping(uint64 => address) public s_receivers;
-    // Mapping to store the gas limit per destination chain.
     mapping(uint64 => uint256) public s_gasLimits;
 
     modifier validateDestinationChain(uint64 _destinationChainSelector) {
@@ -62,10 +49,6 @@ contract Sender is OwnerIsCreator {
         _;
     }
 
-    /// @notice Constructor initializes the contract with the router address.
-    /// @param _router The address of the router contract.
-    /// @param _link The address of the link contract.
-    /// @param _usdcToken The address of the usdc contract.
     constructor(address _router, address _link, address _usdcToken) {
         if (_router == address(0)) revert InvalidRouter();
         if (_link == address(0)) revert InvalidLinkToken();
@@ -120,7 +103,8 @@ contract Sender is OwnerIsCreator {
     function sendMessagePayLINK(
         uint64 _destinationChainSelector,
         address _beneficiary,
-        uint256 _amount
+        uint256 _amount,
+        uint256 _index
     )
         external
         onlyOwner
@@ -146,8 +130,9 @@ contract Sender is OwnerIsCreator {
         Client.EVM2AnyMessage memory evm2AnyMessage = Client.EVM2AnyMessage({
             receiver: abi.encode(receiver), // ABI-encoded receiver address
             data: abi.encodeWithSelector(
-                IStaker.stake.selector,
+                IControllerGoFundMe.getProject.selector,
                 _beneficiary,
+                _index,
                 _amount
             ), // Encode the function selector and the arguments of the stake function
             tokenAmounts: tokenAmounts, // The amount and type of token being transferred

@@ -42,11 +42,8 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
     event MessageFailed(bytes32 indexed messageId, bytes reason);
     event MessageRecovered(bytes32 indexed messageId);
 
-    // Example error code, could have many different error codes.
     enum ErrorCode {
-        // RESOLVED is first so that the default value is resolved.
         RESOLVED,
-        // Could have any number of error codes here.
         FAILED
     }
 
@@ -57,14 +54,11 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
 
     IERC20 private immutable i_usdcToken;
     IControllerGoFundMe private immutable i_controller;
-    IGoFundMe private i_gofundme;
+    IGoFundMe private _gofundme;
 
-    // Mapping to keep track of the sender contract per source chain.
     mapping(uint64 => address) public s_senders;
+    mapping(bytes32 => Client.Any2EVMMessage) public s_messageContents;
 
-    mapping(bytes32 => Client.Any2EVMMessage) public s_messageContents; // The message contents of failed messages are stored here.
-
-    // Contains failed messages and their state.
     EnumerableMap.Bytes32ToUintMap internal s_failedMessages;
 
     modifier validateSourceChain(uint64 _sourceChainSelector) {
@@ -151,18 +145,20 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
                 any2EvmMessage.destTokenAmounts[0].token
             );
 
-        uint256 projectIndex = abi.decode(any2EvmMessage.data, (uint256));
-        address goFundMeAddress = i_controller.getProject(projectIndex);
+        (
+            bytes4 selector,
+            address beneficiary,
+            uint256 index,
+            uint256 amount
+        ) = abi.decode(
+                any2EvmMessage.data,
+                (bytes4, address, uint256, uint256)
+            );
+
+        //        uint256 projectIndex = abi.decode(any2EvmMessage.data, (uint256));
+        address goFundMeAddress = i_controller.getProject(index);
         if (goFundMeAddress == address(0)) revert NoProjectAddressFound();
-
-        IGoFundMe goFundProject = IGoFundMe(goFundMeAddress);
-        uint256 amount = any2EvmMessage.destTokenAmounts[0].amount;
-
-        try goFundProject.fund(amount) {
-            // success
-        } catch {
-            revert FailedToFundProject();
-        }
+        processFund(goFundMeAddress, beneficiary, amount);
 
         emit MessageReceived(
             any2EvmMessage.messageId,
@@ -174,33 +170,36 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
         );
     }
 
-    /// @notice Allows the owner to retry a failed message in order to unblock the associated tokens.
-    /// @param messageId The unique identifier of the failed message.
-    /// @param beneficiary The address to which the tokens will be sent.
-    /// @dev This function is only callable by the contract owner. It changes the status of the message
-    /// from 'failed' to 'resolved' to prevent reentry and multiple retries of the same message.
+    function processFund(
+        address goFundMeAddress,
+        address from,
+        uint256 amount
+    ) internal {
+        _gofundme = IGoFundMe(goFundMeAddress);
+
+        try _gofundme.fundFromContract(from, amount) {
+            // success
+        } catch {
+            revert FailedToFundProject();
+        }
+    }
+
     function retryFailedMessage(
         bytes32 messageId,
         address beneficiary
     ) external onlyOwner {
-        // Check if the message has failed; if not, revert the transaction.
         if (s_failedMessages.get(messageId) != uint256(ErrorCode.FAILED))
             revert MessageNotFailed(messageId);
 
-        // Set the error code to RESOLVED to disallow reentry and multiple retries of the same failed message.
         s_failedMessages.set(messageId, uint256(ErrorCode.RESOLVED));
 
-        // Retrieve the content of the failed message.
         Client.Any2EVMMessage memory message = s_messageContents[messageId];
 
-        // This example expects one token to have been sent.
-        // Transfer the associated tokens to the specified receiver as an escape hatch.
         IERC20(message.destTokenAmounts[0].token).safeTransfer(
             beneficiary,
             message.destTokenAmounts[0].amount
         );
 
-        // Emit an event indicating that the message has been recovered.
         emit MessageRecovered(messageId);
     }
 
@@ -210,7 +209,6 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
     ) external view returns (FailedMessage[] memory) {
         uint256 length = s_failedMessages.length();
 
-        // Calculate the actual number of items to return (can't exceed total length or requested limit)
         uint256 returnLength = (offset + limit > length)
             ? length - offset
             : limit;
@@ -218,7 +216,6 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
             returnLength
         );
 
-        // Adjust loop to respect pagination (start at offset, end at offset + limit or total length)
         for (uint256 i = 0; i < returnLength; i++) {
             (bytes32 messageId, uint256 errorCode) = s_failedMessages.at(
                 offset + i

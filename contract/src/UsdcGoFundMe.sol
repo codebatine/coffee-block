@@ -75,6 +75,15 @@ contract GoFundMe {
         emit FundReceived(msg.sender, amountInDecimals);
     }
 
+    function fundFromContract(address _from, uint256 _amount) external {
+        uint256 amountInDecimals = _amount * Constants.USD_DECIMALS;
+        require(usdc.transferFrom(_from, address(this), amountInDecimals));
+        m_donations[_from] += amountInDecimals;
+        totalBalance += amountInDecimals;
+        funders.push(_from);
+        emit FundReceived(_from, amountInDecimals);
+    }
+
     function withdraw() public onlyOwner {
         require(totalBalance >= goalInUsd, "Goal not reached");
 
