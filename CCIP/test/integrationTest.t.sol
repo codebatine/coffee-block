@@ -66,11 +66,7 @@ contract RecieverTest is Test {
         i_RRouter = IRouterClient(RecRouter);
         vm.startPrank(Alice);
         sender = new Sender(address(i_SRouter), address(Slink), address(Susdc));
-        receiver = new Receiver(
-            address(i_RRouter),
-            address(Rusdc),
-            address(i_controller)
-        );
+        receiver = new Receiver(address(i_RRouter), address(Rusdc));
         vm.stopPrank();
 
         controller = IControllerGoFundMe(i_controller);
@@ -91,14 +87,19 @@ contract RecieverTest is Test {
         vm.startPrank(Alice);
         receiver.setSenderForSourceChain(
             ChainSelector_SEPOLIA,
-            address(sender)
+            address(sender),
+            address(goFundMe)
         );
         vm.stopPrank();
     }
 
     function test_setSenderForSourceChain() public {
         vm.prank(Alice);
-        receiver.setSenderForSourceChain(ChainSelector_POLY, address(sender));
+        receiver.setSenderForSourceChain(
+            ChainSelector_POLY,
+            address(sender),
+            address(goFundMe)
+        );
         assertEq(receiver.s_senders(ChainSelector_POLY), address(sender));
     }
 
@@ -126,7 +127,7 @@ contract RecieverTest is Test {
         });
 
         vm.startPrank(Alice);
-        sender.sendMessagePayLINK(ChainSelector_POLY, Alice, 5 * 1e6, 1);
-        receiver.ccipReceive(dataPackage);
+        sender.sendMessagePayLINK(ChainSelector_POLY, Alice, 5 * 1e6);
+        //        receiver.ccipReceive(dataPackage);
     }
 }

@@ -1,16 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.25;
 
-library ChainIDMainnet {
-    uint8 public constant ETHEREUM = 1;
-    uint8 public constant BSC = 56;
-    uint8 public constant POLYGON = 137;
-    uint8 public constant OPTIMISM = 10;
-    uint32 public constant AVALANCHE = 43114;
-    uint32 public constant ARBITRUM = 42161;
-    uint32 public constant BASE = 8453;
-}
-
 library ChainIDTestnet {
     uint8 public constant BSC = 97;
     uint32 public constant AVALANCHE = 43113;
@@ -23,16 +13,16 @@ library ChainIDTestnet {
 
 library RouterTestnet {
     address public constant AVALANCHE =
-        0xF4c7E640EdA248ef95972845a62bdC74237805dB;
+        0xF694E193200268f9a4868e4Aa017A0118C9a8177;
     address public constant ETHEREUM =
-        0x80226fc0Ee2b096224EeAc085Bb9a8cba1146f7D;
+        0x0BF3dE8c5D3e8A2B34D2BEeB17ABfCeBaf363A59;
     address public constant OPTIMISM =
-        0x3206695CaE29952f4b0c22a169725a865bc8Ce0f;
+        0x114A20A10b43D4115e5aeef7345a1A71d2a60C57;
     address public constant ARBITRUM =
-        0x141fa059441E0ca23ce184B6A78bafD2A517DdE8;
+        0x2a9C5afB0d0e4BAb2BCdaE109EC4b0c4Be15a165;
     address public constant POLYGON =
-        0x849c5ED5a80F5B408Dd4969b78c2C8fdf0565Bfe;
-    address public constant BASE = 0x881e3A65B4d4a04dD529061dd0071cf975F58bCD;
+        0x9C32fCB86BF0f4a1A8921a9Fe46de3198bb884B2;
+    address public constant BASE = 0xD3b06cEbF099CE7DA4AcCf578aaebFDBd6e88a93;
 }
 
 library USDCAddressTestnet {
@@ -49,18 +39,18 @@ library USDCAddressTestnet {
         0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d;
 }
 
-library USDCAddressMainnet {
+library LINKAddressTestnet {
     address public constant AVALANCHE =
-        0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E;
+        0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846;
     address public constant ETHEREUM =
-        0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+        0x779877A7B0D9E8603169DdbD7836e478b4624789;
     address public constant POLYGON =
-        0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
+        0x0Fd9e8d3aF1aaee056EB9e802c3A762a667b1904;
     address public constant OPTIMISM =
-        0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85;
-    address public constant BASE = 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
+        0xE4aB69C077896252FAFBD49EFD26B5D171A32410;
+    address public constant BASE = 0xE4aB69C077896252FAFBD49EFD26B5D171A32410;
     address public constant ARBITRUM =
-        0xaf88d065e77c8cC2239327C5EDb3A432268e5831;
+        0xb1D4538B4571d411F07960EF2838Ce337FE1E80E;
 }
 
 library ChainSelectors {
