@@ -12,13 +12,13 @@ export default class Application {
     this.email = email || "email";
     this.lastUpdate = lastUpdate || new Date();
     this.published = published || "no";
-    this.image = {src: this.src(), alt: ""}
+    this.image = {src: this.src(), alt: "Coffee bean"}
   }
 
   src() {
 
-
-    const url = "/content/img/coffee-1.jpg"
+    const random = (Math.random() * (7 - 1) + 1).toFixed(0);
+    const url = `../content/coffee-${random}.jpg`
 
     return url;
   }

@@ -11,14 +11,14 @@ export const Step1 = ({ connected, connectWallet, address }) => {
         <button onClick={connectWallet} className={`application-button ${connected}`}>
           {connected === "false" ? "Connect Wallet" : "Wallet Connected"}
         </button>
-        <button
+        {/* <button
           onClick={async () => {
             await getProjctOwner();
           }}
           className="application-button"
         >
           Get Owner
-        </button>
+        </button> */}
       </div>
       <p>Copy the address below 👇</p>
       <br />
