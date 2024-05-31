@@ -32,7 +32,7 @@ export const Details = () => {
         <p>Reason: {application.reason || 'N/A'}</p>
         <p>Amount: {application.amount || 'N/A'}</p>
         <p>Time: {application.time || 'N/A'}</p>
-        <p>Date: {application.date || 'N/A'}</p>
+        {/* <p>Date: {application.date || 'N/A'}</p> */}
         <div className="img-container-x"><img src={coffee1} alt="Coffee cup" /></div>
         </div>
       </div>
