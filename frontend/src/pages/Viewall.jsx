@@ -22,24 +22,21 @@ export const Viewall = () => {
 
   }, [])
 
+  console.log();
+
   return (
     <div className="main-content">
 
 
       <div className="grid-container">
-        {/* <h3>Applications</h3> */}
         {applications.length > 0 ? 
-        <>{applications.map((application, index) => application.published === "yes" && (
+        <>{applications.map((application) => application.published === "yes" && (
         <div key={application.id} className="grid-item">
-          <Link to={`/coffeblock/details/${application.id}`}><div className="img-container"><img src={(application && application.image.src)} alt="Coffee cup" /></div></Link>
+          <Link to={`/coffeblock/details/${application.id}`}><div className="img-container"><img src={application.image.src} alt="Coffee cup" /></div></Link>
           <div className="caption"><h2>{application.company || "company missing"}</h2></div>
           <h2>{application.area || "area missing"}</h2>
           <p>{application.reason || "reason missing"}</p>
-          {/* <div>{application.amount || "amount missing"}</div>
-          <div>{application.time || "time missing"}</div>
-          <div>{application.date || "date missing"}</div> */}
         </div>)
-        
       )}</>
         :
         <div>Inga applikationer funna</div>
