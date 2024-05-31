@@ -57,6 +57,32 @@ a {
   margin: 30px auto;
 }
 
+.content-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  background: #fff;
+  border-radius: 10px;
+  width: 90%;
+  margin: 30px auto;
+  padding: 15px;
+}
+.content-container h2, .content-container h3 {
+  margin: 5px;
+  text-align: center;
+  font-size: 2rem;
+}
+.content-container p {
+  margin: 10px 0;
+}
+
+.content-container h2, h3 {
+  margin: 5px;
+  text-align: center;
+}
+
 .dosis {
   font-family: "Dosis", sans-serif;
   font-optical-sizing: auto;
