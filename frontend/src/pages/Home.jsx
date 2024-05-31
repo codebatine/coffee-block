@@ -6,19 +6,11 @@ export const Home = () => {
     <div className="main-content">
       <div className="content-container">
         <h1 className="josefin-sans">Welcome to Home</h1>
-        <p className="dosis">This is some dummy text for the home page. More content will be added soon.</p>
-        <div className="grid-container">
-          <div className="grid-item">
-            <div className="img-container">
-              <img src={img1} alt="Dummy" />
-            </div>
-          </div>
-          <div className="grid-item">
-            <div className="img-container">
-              <img src={img2} alt="Dummy" />
-            </div>
-          </div>
-        </div>
+        <p>Coffe Block lets crypto users support small coffee farms using any crypto of choice. For this we have set up smart contracts using Chainlink's CCIP.</p>
+        <img className="responsive-img" src={img1} alt="Dummy" />
+        <p>This is some text after the first image.</p>
+        <img className="responsive-img" src={img2} alt="Dummy" />
+        <p>This is some text after the second image.</p>
       </div>
     </div>
   );
