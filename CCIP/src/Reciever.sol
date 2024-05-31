@@ -9,18 +9,14 @@ import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-
 import {EnumerableMap} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/utils/structs/EnumerableMap.sol";
 import {ChainSelectors} from "./constants/Constants.c.sol";
 import {IControllerGoFundMe} from "../interface/IControllerGoFundMe.i.sol";
+import {IGoFundMe} from "../interface/IGoFundMe.i.sol";
 
-/**
- * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
- * THIS IS AN EXAMPLE CONTRACT THAT USES UN-AUDITED CODE.
- * DO NOT USE THIS CODE IN PRODUCTION.
- */
-
-/// @title - A simple receiver contract for receiving usdc tokens then calling a staking contract.
 contract Receiver is CCIPReceiver, OwnerIsCreator {
     using SafeERC20 for IERC20;
     using EnumerableMap for EnumerableMap.Bytes32ToUintMap;
 
+    error NoProjectAddressFound();
+    error FailedToFundProject();
     error InvalidUsdcToken(); // Used when the usdc token address is 0
     error InvalidController(); // Used when the controller address is 0
     error InvalidSourceChain(); // Used when the source chain is 0
@@ -61,13 +57,12 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
 
     IERC20 private immutable i_usdcToken;
     IControllerGoFundMe private immutable i_controller;
-    IGoFundMe private immutable i_gofundme;
+    IGoFundMe private i_gofundme;
 
     // Mapping to keep track of the sender contract per source chain.
     mapping(uint64 => address) public s_senders;
 
-    // The message contents of failed messages are stored here.
-    mapping(bytes32 => Client.Any2EVMMessage) public s_messageContents;
+    mapping(bytes32 => Client.Any2EVMMessage) public s_messageContents; // The message contents of failed messages are stored here.
 
     // Contains failed messages and their state.
     EnumerableMap.Bytes32ToUintMap internal s_failedMessages;
@@ -79,8 +74,6 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
         _;
     }
 
-    /// @dev Modifier to allow only the contract itself to execute a function. e
-    /// Throws an exception if called by any account other than the contract itself.
     modifier onlySelf() {
         if (msg.sender != address(this)) revert OnlySelf();
         _;
@@ -98,10 +91,6 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
         i_usdcToken.safeApprove(address(i_controller), type(uint256).max);
     }
 
-    /// @dev Set the sender contract for a given source chain.
-    /// @notice This function can only be called by the owner.
-    /// @param _sourceChainSelector The selector of the source chain.
-    /// @param _sender The sender contract on the source chain .
     function setSenderForSourceChain(
         uint64 _sourceChainSelector,
         address _sender
@@ -110,9 +99,6 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
         s_senders[_sourceChainSelector] = _sender;
     }
 
-    /// @dev Delete the sender contract for a given source chain.
-    /// @notice This function can only be called by the owner.
-    /// @param _sourceChainSelector The selector of the source chain.
     function deleteSenderForSourceChain(
         uint64 _sourceChainSelector
     ) external onlyOwner validateSourceChain(_sourceChainSelector) {
@@ -121,10 +107,6 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
         delete s_senders[_sourceChainSelector];
     }
 
-    /// @notice The entrypoint for the CCIP router to call. This function should
-    /// never revert, all errors should be handled internally in this contract.
-    /// @param any2EvmMessage The message to process.
-    /// @dev Extremely important to ensure only router calls this.
     function ccipReceive(
         Client.Any2EVMMessage calldata any2EvmMessage
     ) external override onlyRouter {
@@ -154,8 +136,6 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
     /// @notice Serves as the entry point for this contract to process incoming messages.
     /// @param any2EvmMessage Received CCIP message.
     /// @dev Transfers specified token amounts to the owner of this contract. This function
-    /// must be external because of the  try/catch for error handling.
-    /// It uses the `onlySelf`: can only be called from the contract.
     function processMessage(
         Client.Any2EVMMessage calldata any2EvmMessage
     ) external onlySelf {
@@ -171,11 +151,19 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
                 any2EvmMessage.destTokenAmounts[0].token
             );
 
-        (bool success, bytes memory returnData) = i_controller.call(
-            any2EvmMessage.data
-        ); // low level call to the staker contract using the encoded function selector and arguments
-        if (!success) revert CallToStakerFailed();
-        if (returnData.length > 0) revert NoReturnDataExpected();
+        uint256 projectIndex = abi.decode(any2EvmMessage.data, (uint256));
+        address goFundMeAddress = i_controller.getProject(projectIndex);
+        if (goFundMeAddress == address(0)) revert NoProjectAddressFound();
+
+        IGoFundMe goFundProject = IGoFundMe(goFundMeAddress);
+        uint256 amount = any2EvmMessage.destTokenAmounts[0].amount;
+
+        try goFundProject.fund(amount) {
+            // success
+        } catch {
+            revert FailedToFundProject();
+        }
+
         emit MessageReceived(
             any2EvmMessage.messageId,
             any2EvmMessage.sourceChainSelector, // fetch the source chain identifier (aka selector)
@@ -216,11 +204,6 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
         emit MessageRecovered(messageId);
     }
 
-    /// @notice Retrieves a paginated list of failed messages.
-    /// @dev This function returns a subset of failed messages defined by `offset` and `limit` parameters. It ensures that the pagination parameters are within the bounds of the available data set.
-    /// @param offset The index of the first failed message to return, enabling pagination by skipping a specified number of messages from the start of the dataset.
-    /// @param limit The maximum number of failed messages to return, restricting the size of the returned array.
-    /// @return failedMessages An array of `FailedMessage` struct, each containing a `messageId` and an `errorCode` (RESOLVED or FAILED), representing the requested subset of failed messages. The length of the returned array is determined by the `limit` and the total number of failed messages.
     function getFailedMessages(
         uint256 offset,
         uint256 limit

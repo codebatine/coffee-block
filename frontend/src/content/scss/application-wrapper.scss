@@ -1,7 +1,13 @@
 .application-wrapper{
   display: flex;
-  flex-direction: column;
-  width: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  background: #fff;
+  border-radius: 10px;
+  width: 90%;
+  margin: 30px auto;
+}
 
   .step0{
     display: flex;
@@ -18,13 +24,13 @@
       padding: 3px;
     }
 
-    .inline-button{
-      border: 1px solid black;
-      height: 20px;
-      padding: 5px;
-      background-color: rgb(167, 225, 243);
-      cursor: pointer;
-    }
+    // .inline-button{
+    //   border: 1px solid black;
+    //   height: 20px;
+    //   padding: 5px;
+    //   background-color: rgb(167, 225, 243);
+    //   cursor: pointer;
+    // }
   }
 
   .step1, .step2, .step3{
@@ -81,17 +87,17 @@
     justify-content: center;
     margin: 15px 0px;
 
-    button{
-      border: 1px solid black;
-      height: 40px;
-      padding: 10px;
-      background-color: rgb(167, 225, 243);
-      cursor: pointer;
+    // button{
+    //   border: 1px solid black;
+    //   height: 40px;
+    //   padding: 10px;
+    //   background-color: rgb(167, 225, 243);
+    //   cursor: pointer;
 
-      &:hover{
-        background-color:  rgb(124, 217, 245);;
-      }
-    }
+    //   &:hover{
+    //     background-color:  rgb(124, 217, 245);;
+    //   }
+    // }
 
     .false{
       border: 1px solid red;
@@ -101,4 +107,4 @@
       border: 1px solid green;
     }
   }
-}
+
