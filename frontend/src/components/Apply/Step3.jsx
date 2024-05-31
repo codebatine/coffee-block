@@ -23,7 +23,7 @@ export const Step3 = ({infoStatus, setInfoStatus, setProjectId}) => {
       setApplications(startedApplications)
       console.log("!!!", startedApplications);
       setFetchStatus("fetched")
-      } catch {
+      } catch (error) {
         console.error("Error fetching applications:", error);
       }
     }

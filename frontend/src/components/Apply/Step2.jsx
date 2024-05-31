@@ -52,6 +52,7 @@ export const Step2 = ({contractStatus, setContractStatus}) => {
     data.amount = amount;
     data.index = contractIndex;
     data.owner = contractSigner;
+    data.project = contract;
 
     try {
       const response = await axios.post('http://localhost:3001/api/v1/applications/submit', data);

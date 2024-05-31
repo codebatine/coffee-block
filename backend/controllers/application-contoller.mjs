@@ -59,6 +59,7 @@ export const updateApplication = (req, res, next) => {
       application.amount = req.body.amount ?? application.amount;
       application.index = req.body.index ?? application.index;
       application.owner = req.body.owner ?? application.owner;
+      application.project = req.body.project ?? application.project;
       application.area = req.body.area ?? application.area;
       application.reason = req.body.reason ?? application.reason;
       application.time = req.body.time ?? application.time;
@@ -66,6 +67,7 @@ export const updateApplication = (req, res, next) => {
       application.email = req.body.email ?? application.email;
       application.lastUpdate = req.body.lastUpdate ?? application.lastUpdate;
       application.pubished = req.body.pubished ?? application.pubished;
+      application.image = req.body.image ?? application.image;
 
       writeFile(folder, file, applications);
       res.status(204).end();
