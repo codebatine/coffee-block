@@ -11,20 +11,12 @@ import {IGoFundMe} from "../interface/IGoFundMe.i.sol";
 import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
 import {Sender} from "../src/Sender.sol";
 import {MockERC20} from "forge-std/mocks/MockERC20.sol";
-
-contract DummyController {
-    function getProject(uint256 index) external view returns (address) {
-        return address(0);
-    }
-
-    function createProject() external returns (address) {
-        return address(0);
-    }
-}
+import {MockGoFundMe} from "./mocks/MockGoFundMe.t.sol";
 
 contract RecieverTest is Test {
     Sender public sender;
     Receiver public receiver;
+    MockGoFundMe public R_goFundMe;
     IControllerGoFundMe public controller;
     IGoFundMe public goFundMe;
 
@@ -52,6 +44,7 @@ contract RecieverTest is Test {
 
     function setUp() public {
         vm.deal(Alice, 1 ether);
+
         // SENDER
         SusdcToken = new MockERC20();
         SusdcToken._mint(Alice, 1000 * 1e6);
@@ -68,10 +61,10 @@ contract RecieverTest is Test {
         sender = new Sender(address(i_SRouter), address(Slink), address(Susdc));
         receiver = new Receiver(address(i_RRouter), address(Rusdc));
         vm.stopPrank();
+        // Project
+        R_goFundMe = new MockGoFundMe(address(Rusdc));
 
         controller = IControllerGoFundMe(i_controller);
-        // address project = controller.createProject();
-        // goFundMe = IGoFundMe(address(project));
         vm.startPrank(Alice);
         Slink.transfer(address(sender), 3 * 1e18);
         Susdc.transfer(address(sender), 5 * 1e6);
@@ -96,6 +89,18 @@ contract RecieverTest is Test {
         vm.prank(Alice);
         receiver.setSenderForSourceChain(ChainSelector_POLY, address(sender));
         assertEq(receiver.s_senders(ChainSelector_POLY), address(sender));
+    }
+
+    function test_AliceHasBalanceOnPolygon() public {
+        uint256 adjustedBalanceUsdc = 1000 * 1e6 - 5 * 1e6;
+        uint256 adjustedBalanceLink = 1000 * 1e18 - 3 * 1e18;
+
+        assertEq(Slink.balanceOf(Alice), adjustedBalanceLink);
+        assertEq(Susdc.balanceOf(Alice), adjustedBalanceUsdc);
+    }
+
+    function test_AliceHasZeroUsdcBalanceonSEPOLIA() public {
+        assertEq(Rusdc.balanceOf(Alice), 0);
     }
 
     function testSendMessagePayLink() public {

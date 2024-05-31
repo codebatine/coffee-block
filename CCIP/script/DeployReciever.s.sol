@@ -20,8 +20,4 @@ contract DeployReciever is Script {
         // vm.stopBroadcast();
         return reciever;
     }
-
-    constructor() {
-        run();
-    }
 }
