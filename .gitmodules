@@ -13,3 +13,6 @@
 [submodule "CCIP/lib/ccip"]
 	path = CCIP/lib/ccip
 	url = https://github.com/smartcontractkit/ccip
+[submodule "contract/lib/ccip"]
+	path = contract/lib/ccip
+	url = https://github.com/smartcontractkit/ccip
