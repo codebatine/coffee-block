@@ -79,7 +79,7 @@ export const Step3 = ({infoStatus, setInfoStatus, setProjectId}) => {
         {infoStatus !== "Submitted" ?  (
           <>
         <div className="button-control">
-          <button onClick={handleFetch}>Retrieve your contract</button>
+          <button className="application-button" onClick={handleFetch}>Retrieve your contract</button>
         </div>
       {fetchStatus === "fetched" && (
       <>
@@ -121,7 +121,7 @@ export const Step3 = ({infoStatus, setInfoStatus, setProjectId}) => {
             <input type="text" id="applyform-email" name="email" onChange={handleSetForm}></input>
           </div>
           <div className="button-control">
-            <button>Submit</button>
+            <button className="application-button">Submit</button>
           </div>
         </form>
         </>
