@@ -1,9 +1,7 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import coffee1 from '../content/img/coffee-1-grid.jpg';
 import { funderSend } from "../services/blockchainServices";
-import Application from "../models/Application";
 
 export const Details = () => {
 

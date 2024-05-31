@@ -1,10 +1,4 @@
 import { useEffect, useState } from 'react';
-import coffee1 from '../content/img/coffee-1-grid.jpg';
-import coffee2 from '../content/img/coffee-2-grid.jpg';
-import coffee3 from '../content/img/coffee-3-grid.jpg';
-import coffee4 from '../content/img/coffee-4-grid.jpg';
-import coffee5 from '../content/img/coffee-5-grid.jpg';
-import coffee6 from '../content/img/coffee-6-grid.jpg';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
@@ -26,8 +20,6 @@ export const Home = () => {
     getApplications();
 
   }, []) 
-
-  const images = [coffee1, coffee2, coffee3, coffee4, coffee5, coffee6];
 
   useEffect(() => {
 
