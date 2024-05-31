@@ -40,10 +40,6 @@ export const Details = () => {
     }
   }
 
-  console.log((application && application.image.src));
-
-
-
   return (
     <>
     <div className="main-content-x">
