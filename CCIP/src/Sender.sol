@@ -1,60 +1,44 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.25;
 
 import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol";
 import {OwnerIsCreator} from "@chainlink/contracts-ccip/src/v0.8/shared/access/OwnerIsCreator.sol";
 import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
 import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IGoFundMe} from "../interface/IGoFundMe.i.sol";
 
-/**
- * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
- * THIS IS AN EXAMPLE CONTRACT THAT USES UN-AUDITED CODE.
- * DO NOT USE THIS CODE IN PRODUCTION.
- */
-
-interface IStaker {
-    function stake(address beneficiary, uint256 amount) external;
-
-    function redeem() external;
-}
-
-/// @title - A simple messenger contract for transferring tokens to a receiver  that calls a staker contract.
 contract Sender is OwnerIsCreator {
     using SafeERC20 for IERC20;
 
-    // Custom errors to provide more descriptive revert messages.
-    error InvalidRouter(); // Used when the router address is 0
-    error InvalidLinkToken(); // Used when the link token address is 0
-    error InvalidUsdcToken(); // Used when the usdc token address is 0
-    error NotEnoughBalance(uint256 currentBalance, uint256 calculatedFees); // Used to make sure contract has enough balance to cover the fees.
-    error NothingToWithdraw(); // Used when trying to withdraw Ether but there's nothing to withdraw.
-    error InvalidDestinationChain(); // Used when the destination chain selector is 0.
-    error InvalidReceiverAddress(); // Used when the receiver address is 0.
-    error NoReceiverOnDestinationChain(uint64 destinationChainSelector); // Used when the receiver address is 0 for a given destination chain.
-    error AmountIsZero(); // Used if the amount to transfer is 0.
-    error InvalidGasLimit(); // Used if the gas limit is 0.
-    error NoGasLimitOnDestinationChain(uint64 destinationChainSelector); // Used when the gas limit is 0.
+    error InvalidRouter();
+    error InvalidLinkToken();
+    error InvalidUsdcToken();
+    error NotEnoughBalance(uint256 currentBalance, uint256 calculatedFees);
+    error NothingToWithdraw();
+    error InvalidDestinationChain();
+    error InvalidReceiverAddress();
+    error NoReceiverOnDestinationChain(uint64 destinationChainSelector);
+    error AmountIsZero();
+    error InvalidGasLimit();
+    error NoGasLimitOnDestinationChain(uint64 destinationChainSelector);
 
-    // Event emitted when a message is sent to another chain.
     event MessageSent(
-        bytes32 indexed messageId, // The unique ID of the CCIP message.
-        uint64 indexed destinationChainSelector, // The chain selector of the destination chain.
-        address indexed receiver, // The address of the receiver contract on the destination chain.
-        address beneficiary, // The beneficiary of the staked tokens on the destination chain.
-        address token, // The token address that was transferred.
-        uint256 tokenAmount, // The token amount that was transferred.
-        address feeToken, // the token address used to pay CCIP fees.
-        uint256 fees // The fees paid for sending the message.
+        bytes32 indexed messageId,
+        uint64 indexed destinationChainSelector,
+        address indexed receiver,
+        address beneficiary,
+        address token,
+        uint256 tokenAmount,
+        address feeToken,
+        uint256 fees
     );
 
     IRouterClient private immutable i_router;
     IERC20 private immutable i_linkToken;
     IERC20 private immutable i_usdcToken;
 
-    // Mapping to keep track of the receiver contract per destination chain.
     mapping(uint64 => address) public s_receivers;
-    // Mapping to store the gas limit per destination chain.
     mapping(uint64 => uint256) public s_gasLimits;
 
     modifier validateDestinationChain(uint64 _destinationChainSelector) {
@@ -62,10 +46,6 @@ contract Sender is OwnerIsCreator {
         _;
     }
 
-    /// @notice Constructor initializes the contract with the router address.
-    /// @param _router The address of the router contract.
-    /// @param _link The address of the link contract.
-    /// @param _usdcToken The address of the usdc contract.
     constructor(address _router, address _link, address _usdcToken) {
         if (_router == address(0)) revert InvalidRouter();
         if (_link == address(0)) revert InvalidLinkToken();
@@ -75,33 +55,17 @@ contract Sender is OwnerIsCreator {
         i_usdcToken = IERC20(_usdcToken);
     }
 
-    /// @dev Set the receiver contract for a given destination chain.
-    /// @notice This function can only be called by the owner.
-    /// @param _destinationChainSelector The selector of the destination chain.
-    /// @param _receiver The receiver contract on the destination chain .
-    function setReceiverForDestinationChain(
+    function setGasLimitAndRecieverForDestinationChain(
         uint64 _destinationChainSelector,
+        uint256 _gasLimit,
         address _receiver
     ) external onlyOwner validateDestinationChain(_destinationChainSelector) {
+        if (_gasLimit == 0) revert InvalidGasLimit();
+        s_gasLimits[_destinationChainSelector] = _gasLimit;
         if (_receiver == address(0)) revert InvalidReceiverAddress();
         s_receivers[_destinationChainSelector] = _receiver;
     }
 
-    /// @dev Set the gas limit for a given destination chain.
-    /// @notice This function can only be called by the owner.
-    /// @param _destinationChainSelector The selector of the destination chain.
-    /// @param _gasLimit The gas limit on the destination chain .
-    function setGasLimitForDestinationChain(
-        uint64 _destinationChainSelector,
-        uint256 _gasLimit
-    ) external onlyOwner validateDestinationChain(_destinationChainSelector) {
-        if (_gasLimit == 0) revert InvalidGasLimit();
-        s_gasLimits[_destinationChainSelector] = _gasLimit;
-    }
-
-    /// @dev Delete the receiver contract for a given destination chain.
-    /// @notice This function can only be called by the owner.
-    /// @param _destinationChainSelector The selector of the destination chain.
     function deleteReceiverForDestinationChain(
         uint64 _destinationChainSelector
     ) external onlyOwner validateDestinationChain(_destinationChainSelector) {
@@ -110,20 +74,12 @@ contract Sender is OwnerIsCreator {
         delete s_receivers[_destinationChainSelector];
     }
 
-    /// @notice Sends data and transfer tokens to receiver on the destination chain.
-    /// @notice Pay for fees in LINK.
-    /// @dev Assumes your contract has sufficient LINK to pay for CCIP fees.
-    /// @param _destinationChainSelector The identifier (aka selector) for the destination blockchain.
-    /// @param _beneficiary The address of the beneficiary of the staked tokens on the destination blockchain.
-    /// @param _amount token amount.
-    /// @return messageId The ID of the CCIP message that was sent.
     function sendMessagePayLINK(
         uint64 _destinationChainSelector,
         address _beneficiary,
-        uint256 _amount
+        uint64 _amount
     )
         external
-        onlyOwner
         validateDestinationChain(_destinationChainSelector)
         returns (bytes32 messageId)
     {
@@ -146,7 +102,7 @@ contract Sender is OwnerIsCreator {
         Client.EVM2AnyMessage memory evm2AnyMessage = Client.EVM2AnyMessage({
             receiver: abi.encode(receiver), // ABI-encoded receiver address
             data: abi.encodeWithSelector(
-                IStaker.stake.selector,
+                IGoFundMe.fundFromContract.selector,
                 _beneficiary,
                 _amount
             ), // Encode the function selector and the arguments of the stake function

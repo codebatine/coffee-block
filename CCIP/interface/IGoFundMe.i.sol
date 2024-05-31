@@ -3,5 +3,5 @@
 pragma solidity ^0.8.19;
 
 interface IGoFundMe {
-    function fund(uint256 _amount) external;
+    function fundFromContract(address beneficiary, uint256 _amount) external;
 }

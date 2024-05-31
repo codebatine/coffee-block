@@ -16,8 +16,14 @@
     align-content: center;
     align-items: center;
 
-    h2{
+    h2, h3 {
       margin: 10px;
+      text-align: center;
+      font-size: 2rem;;
+    }
+  
+    p {
+      margin: 10px 0;
     }
 
     div{
@@ -85,6 +91,7 @@
   .button-control{
     display: flex;
     justify-content: center;
+    flex-direction: column;
     margin: 15px 0px;
 
     // button{
@@ -99,12 +106,12 @@
     //   }
     // }
 
-    .false{
-      border: 1px solid red;
-    }
+    // .false{
+    //   border: 1px solid red;
+    // }
 
-    .true{
-      border: 1px solid green;
-    }
+    // .true{
+    //   border: 1px solid green;
+    // }
   }
 

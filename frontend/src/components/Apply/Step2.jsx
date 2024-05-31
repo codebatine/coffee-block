@@ -80,7 +80,7 @@ export const Step2 = ({contractStatus, setContractStatus}) => {
         <h2>2.1 Create contract</h2>
       <div className="button-control">
         
-        {!contract && !loading && <button onClick={handleClick}>Create</button>}
+        {!contract && !loading && <button className="application-button" onClick={handleClick}>Create</button>}
         {!contract && loading && <div>Waiting for blockchain transaction to finish ...</div>}
         {contract && <div>Contract created at: <a target="_blank" href={`https://www.oklink.com/amoy/tx/${contract}`}>{contract}</a></div>}
         
@@ -96,7 +96,7 @@ export const Step2 = ({contractStatus, setContractStatus}) => {
         <input type="text" id="applyform-amount" name="amount" onChange={handleSetContractInfo}></input>
       </div>
       <div className="button-control">
-        <button>Submit</button>
+        <button className="application-button">Submit</button>
       </div>
     </form>} {contractStatus === "Created" && <div> Project name and goal submitted, please proceed.</div>}
     
