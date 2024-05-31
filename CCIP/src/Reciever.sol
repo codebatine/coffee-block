@@ -53,6 +53,7 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
 
     IERC20 private immutable i_usdcToken;
     IGoFundMe private i_gofundme;
+    IControllerGoFundMe private immutable i_controller;
 
     mapping(uint64 => address) public s_senders;
     mapping(bytes32 => Client.Any2EVMMessage) public s_messageContents;
@@ -69,8 +70,14 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
         _;
     }
 
-    constructor(address _router, address _usdcToken) CCIPReceiver(_router) {
+    constructor(
+        address _router,
+        address _usdcToken,
+        address _controller
+    ) CCIPReceiver(_router) {
         if (_usdcToken == address(0)) revert InvalidUsdcToken();
+        if (_controller == address(0)) revert InvalidController();
+        i_controller = IControllerGoFundMe(_controller);
         i_usdcToken = IERC20(_usdcToken);
     }
 
@@ -136,7 +143,18 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
         //if (!success) revert CallToProjectFailed();
         //if (returnData.length > 0) revert NoReturnDataExpected();
 
-        i_gofundme.fundFromContract(any2EvmMessage.destTokenAmounts[0].amount);
+        // i_gofundme.fundFromContract(any2EvmMessage.destTokenAmounts[0].amount);
+
+        (bool success, bytes memory returnData) = address(i_controller).call(
+            any2EvmMessage.data
+        );
+
+        //i_controller.crossChainDonation(
+        //any2EvmMessage.data.index,
+        //any2EvmMessage.destTokenAmounts[0].amount
+        //);
+        if (!success) revert CallToProjectFailed();
+        if (returnData.length > 0) revert NoReturnDataExpected();
 
         emit MessageReceived(
             any2EvmMessage.messageId,

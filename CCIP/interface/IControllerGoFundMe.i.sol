@@ -7,5 +7,9 @@ interface IControllerGoFundMe {
 
     function getProject(uint256 _index) external view returns (address);
 
-    function createProject() external returns (address);
+    function crossChainDonation(uint256 _index, uint256 _amount) external;
+
+    function createNewProject(
+        address _usdcTokenAddress
+    ) external returns (address);
 }

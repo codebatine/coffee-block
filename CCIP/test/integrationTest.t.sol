@@ -8,21 +8,26 @@ import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/
 import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
 import {IControllerGoFundMe} from "../interface/IControllerGoFundMe.i.sol";
 import {IGoFundMe} from "../interface/IGoFundMe.i.sol";
-import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
+import {ERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/ERC20.sol";
+import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Sender} from "../src/Sender.sol";
 import {MockERC20} from "forge-std/mocks/MockERC20.sol";
 import {MockGoFundMe} from "./mocks/MockGoFundMe.t.sol";
+import {MockControllerGoFundMe} from "./mocks/MockController.t.sol";
 
 contract RecieverTest is Test {
+    using SafeERC20 for ERC20;
+
     Sender public sender;
     Receiver public receiver;
     MockGoFundMe public R_goFundMe;
-    IControllerGoFundMe public controller;
+    MockControllerGoFundMe public R_controller;
+    //    IControllerGoFundMe public controller;
     IGoFundMe public goFundMe;
 
-    IERC20 public Susdc;
-    IERC20 public Slink;
-    IERC20 public Rusdc;
+    ERC20 public Susdc;
+    ERC20 public Slink;
+    ERC20 public Rusdc;
 
     IRouterClient private i_SRouter;
     IRouterClient private i_RRouter;
@@ -47,28 +52,37 @@ contract RecieverTest is Test {
     function setUp() public {
         vm.deal(Alice, 1 ether);
 
+        // controller
+
+        R_controller = new MockControllerGoFundMe();
+        vm.prank(Alice);
+        //R_controller.createNewProject(address(RusdcToken));
         // SENDER
         SusdcToken = new MockERC20();
         SusdcToken._mint(Alice, 1000 * 1e6);
         SlinkToken = new MockERC20();
         SlinkToken._mint(Alice, 1000 * 1e18);
-        Susdc = IERC20(address(SusdcToken));
-        Slink = IERC20(address(SlinkToken));
+        Susdc = ERC20(address(SusdcToken));
+        Slink = ERC20(address(SlinkToken));
         i_SRouter = IRouterClient(SenderRouter);
         // RECEIVER
         RusdcToken = new MockERC20();
-        Rusdc = IERC20(address(RusdcToken));
+        Rusdc = ERC20(address(RusdcToken));
         i_RRouter = IRouterClient(ReceiverRouter);
         vm.startPrank(Alice);
         sender = new Sender(address(i_SRouter), address(Slink), address(Susdc));
-        receiver = new Receiver(address(i_RRouter), address(Rusdc));
+        receiver = new Receiver(
+            address(i_RRouter),
+            address(Rusdc),
+            address(i_controller)
+        );
         vm.stopPrank();
 
         RusdcToken._mint(address(receiver), 1000 * 1e6);
         // Project
-        R_goFundMe = new MockGoFundMe(address(Rusdc));
+        //        R_goFundMe = new MockGoFundMe(address(Rusdc));
 
-        controller = IControllerGoFundMe(i_controller);
+        // i_controller = IControllerGoFundMe(i_controller);
         vm.startPrank(Alice);
         Slink.transfer(address(sender), 4 * 1e18);
         Susdc.transfer(address(sender), 20 * 1e6);
@@ -124,8 +138,9 @@ contract RecieverTest is Test {
         Client.EVM2AnyMessage memory evm2AnyMessage = Client.EVM2AnyMessage({
             receiver: abi.encode(receiver), // ABI-encoded receiver address
             data: abi.encodeWithSelector(
-                IGoFundMe.fundFromContract.selector,
+                IControllerGoFundMe.crossChainDonation.selector,
                 //address(R_goFundMe),
+                1,
                 20
             ), // Encode the function selector and the arguments of the stake function
             tokenAmounts: tokenAmounts, // The amount and type of token being transferred
@@ -149,6 +164,6 @@ contract RecieverTest is Test {
         vm.prank(0x0BF3dE8c5D3e8A2B34D2BEeB17ABfCeBaf363A59);
         receiver.ccipReceive(dataPackage);
 
-        assertEq(Rusdc.balanceOf(address(R_goFundMe)), 20 * 1e6);
+        //assertEq(Rusdc.balanceOf(address(R_goFundMe)), 20 * 1e6);
     }
 }

@@ -27,7 +27,7 @@ contract GoFundMe {
     error NotEnoughFunds();
     error InvalidUsdcsToken();
 
-    IERC20 public usdc;
+    ERC20 public usdc;
     string public projectName;
     uint256 public goalInUsd;
     uint256 public totalBalance; // The total amount of funds that have been raised.

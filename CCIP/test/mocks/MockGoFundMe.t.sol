@@ -53,8 +53,8 @@ contract MockGoFundMe {
         _;
     }
 
-    constructor(address _usdcTokenAddress) {
-        i_owner = msg.sender;
+    constructor(address _usdcTokenAddress, address _owner) {
+        i_owner = _owner;
         if (_usdcTokenAddress == address(0)) revert InvalidUsdcsToken();
         usdc = ERC20(_usdcTokenAddress);
         usdcTokenAddress = _usdcTokenAddress;
