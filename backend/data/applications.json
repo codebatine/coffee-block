@@ -13,7 +13,7 @@
     "lastUpdate": 1717155006119,
     "published": "no",
     "image": {
-      "src": "../content/coffee-1.jpg",
+      "src": "/coffeeblock/content/coffee-1.jpg",
       "alt": "Picture of coffee beans."
     },
     "id": "27481517e6044985a7cb1f964a89191b"
@@ -31,7 +31,10 @@
     "email": "support@coffeedelight.io",
     "lastUpdate": 1717160894049,
     "published": "yes",
-    "image": { "src": "../content/coffee-1.jpg", "alt": "Coffee bean" },
+    "image": {
+      "src": "/coffeeblock/content/coffee-2.jpg",
+      "alt": "Coffee bean"
+    },
     "id": "daa34621469346a881faadcaffd54c6a"
   },
   {
@@ -47,7 +50,10 @@
     "email": "bean@tangobean.io",
     "lastUpdate": 1717165397132,
     "published": "yes",
-    "image": { "src": "../content/coffee-1.jpg", "alt": "Coffee bean" },
+    "image": {
+      "src": "/coffeeblock/content/coffee-3.jpg",
+      "alt": "Coffee bean"
+    },
     "id": "30b45f0a8415443a86fd4d2e67af8224"
   },
   {
@@ -63,7 +69,10 @@
     "email": "crypto@coffeebrothers.io",
     "lastUpdate": 1717166501747,
     "published": "yes",
-    "image": { "src": "../content/coffee-1.jpg", "alt": "Coffee bean" },
+    "image": {
+      "src": "/coffeeblock/content/coffee-4.jpg",
+      "alt": "Coffee bean"
+    },
     "id": "2227c0bdec6e43e19fc3c37c03766099"
   }
 ]

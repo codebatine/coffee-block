@@ -18,7 +18,7 @@ export default class Application {
   src() {
 
     const random = (Math.random() * (7 - 1) + 1).toFixed(0);
-    const url = `../content/coffee-${random}.jpg`
+    const url = `/coffeeblock/content/coffee-${random}.jpg`
 
     return url;
   }
