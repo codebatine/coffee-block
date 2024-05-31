@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.25;
 
 import {OwnerIsCreator} from "@chainlink/contracts-ccip/src/v0.8/shared/access/OwnerIsCreator.sol";
 import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
@@ -17,36 +17,32 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
 
     error NoProjectAddressFound();
     error FailedToFundProject();
-    error InvalidUsdcToken(); // Used when the usdc token address is 0
-    error InvalidController(); // Used when the controller address is 0
-    error InvalidSourceChain(); // Used when the source chain is 0
-    error InvalidSenderAddress(); // Used when the sender address is 0
-    error NoSenderOnSourceChain(uint64 sourceChainSelector); // Used when there is no sender for a given source chain
-    error WrongSenderForSourceChain(uint64 sourceChainSelector); // Used when the sender contract is not the correct one
-    error OnlySelf(); // Used when a function is called outside of the contract itself
-    error WrongReceivedToken(address usdcToken, address receivedToken); // Used if the received token is different than usdc token
-    error CallToStakerFailed(); // Used when the call to the stake function of the staker contract is not succesful
-    error NoReturnDataExpected(); // Used if the call to the stake function of the staker contract returns data. This is not expected
-    error MessageNotFailed(bytes32 messageId); // Used if you try to retry a message that has no failed
+    error InvalidUsdcToken();
+    error InvalidController();
+    error InvalidSourceChain();
+    error InvalidSenderAddress();
+    error NoSenderOnSourceChain(uint64 sourceChainSelector);
+    error WrongSenderForSourceChain(uint64 sourceChainSelector);
+    error OnlySelf();
+    error WrongReceivedToken(address usdcToken, address receivedToken);
+    error CallToProjectFailed();
+    error NoReturnDataExpected();
+    error MessageNotFailed(bytes32 messageId);
 
-    // Event emitted when a message is received from another chain.
     event MessageReceived(
-        bytes32 indexed messageId, // The unique ID of the CCIP message.
-        uint64 indexed sourceChainSelector, // The chain selector of the source chain.
-        address indexed sender, // The address of the sender from the source chain.
-        bytes data, // The data that was received.
-        address token, // The token address that was transferred.
-        uint256 tokenAmount // The token amount that was transferred.
+        bytes32 indexed messageId,
+        uint64 indexed sourceChainSelector,
+        address indexed sender,
+        bytes data,
+        address token,
+        uint256 tokenAmount
     );
 
     event MessageFailed(bytes32 indexed messageId, bytes reason);
     event MessageRecovered(bytes32 indexed messageId);
 
-    // Example error code, could have many different error codes.
     enum ErrorCode {
-        // RESOLVED is first so that the default value is resolved.
         RESOLVED,
-        // Could have any number of error codes here.
         FAILED
     }
 
@@ -56,21 +52,15 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
     }
 
     IERC20 private immutable i_usdcToken;
-    IControllerGoFundMe private immutable i_controller;
-    IGoFundMe private i_gofundme;
+    IGoFundMe private _gofundme;
 
-    // Mapping to keep track of the sender contract per source chain.
     mapping(uint64 => address) public s_senders;
+    mapping(bytes32 => Client.Any2EVMMessage) public s_messageContents;
 
-    mapping(bytes32 => Client.Any2EVMMessage) public s_messageContents; // The message contents of failed messages are stored here.
-
-    // Contains failed messages and their state.
     EnumerableMap.Bytes32ToUintMap internal s_failedMessages;
 
     modifier validateSourceChain(uint64 _sourceChainSelector) {
         if (_sourceChainSelector == 0) revert InvalidSourceChain();
-        if (!ChainSelectors.verifyChainSelector(_sourceChainSelector))
-            revert InvalidSourceChain();
         _;
     }
 
@@ -79,16 +69,14 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
         _;
     }
 
-    constructor(
-        address _router,
-        address _usdcToken,
-        address _controller
-    ) CCIPReceiver(_router) {
+    constructor(address _router, address _usdcToken) CCIPReceiver(_router) {
         if (_usdcToken == address(0)) revert InvalidUsdcToken();
-        if (_controller == address(0)) revert InvalidController();
         i_usdcToken = IERC20(_usdcToken);
-        i_controller = IControllerGoFundMe(_controller);
-        i_usdcToken.safeApprove(address(i_controller), type(uint256).max);
+    }
+
+    function setProjectContract(address gofundme) external {
+        _gofundme = IGoFundMe(gofundme);
+        i_usdcToken.safeApprove(address(_gofundme), type(uint256).max);
     }
 
     function setSenderForSourceChain(
@@ -110,36 +98,26 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
     function ccipReceive(
         Client.Any2EVMMessage calldata any2EvmMessage
     ) external override onlyRouter {
-        // validate the sender contract
         if (
             abi.decode(any2EvmMessage.sender, (address)) !=
             s_senders[any2EvmMessage.sourceChainSelector]
         ) revert WrongSenderForSourceChain(any2EvmMessage.sourceChainSelector);
-        /* solhint-disable no-empty-blocks */
-        try this.processMessage(any2EvmMessage) {
-            // Intentionally empty in this example; no action needed if processMessage succeeds
-        } catch (bytes memory err) {
-            // Could set different error codes based on the caught error. Each could be
-            // handled differently.
+
+        try this.processMessage(any2EvmMessage) {} catch (bytes memory err) {
             s_failedMessages.set(
                 any2EvmMessage.messageId,
                 uint256(ErrorCode.FAILED)
             );
             s_messageContents[any2EvmMessage.messageId] = any2EvmMessage;
-            // Don't revert so CCIP doesn't revert. Emit event instead.
-            // The message can be retried later without having to do manual execution of CCIP.
             emit MessageFailed(any2EvmMessage.messageId, err);
             return;
         }
     }
 
-    /// @notice Serves as the entry point for this contract to process incoming messages.
-    /// @param any2EvmMessage Received CCIP message.
-    /// @dev Transfers specified token amounts to the owner of this contract. This function
     function processMessage(
         Client.Any2EVMMessage calldata any2EvmMessage
     ) external onlySelf {
-        _ccipReceive(any2EvmMessage); // process the message - may revert
+        _ccipReceive(any2EvmMessage);
     }
 
     function _ccipReceive(
@@ -151,56 +129,39 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
                 any2EvmMessage.destTokenAmounts[0].token
             );
 
-        uint256 projectIndex = abi.decode(any2EvmMessage.data, (uint256));
-        address goFundMeAddress = i_controller.getProject(projectIndex);
-        if (goFundMeAddress == address(0)) revert NoProjectAddressFound();
+        (bool success, bytes memory returnData) = address(_gofundme).call(
+            any2EvmMessage.data
+        );
 
-        IGoFundMe goFundProject = IGoFundMe(goFundMeAddress);
-        uint256 amount = any2EvmMessage.destTokenAmounts[0].amount;
-
-        try goFundProject.fund(amount) {
-            // success
-        } catch {
-            revert FailedToFundProject();
-        }
+        if (!success) revert CallToProjectFailed();
+        if (returnData.length > 0) revert NoReturnDataExpected();
 
         emit MessageReceived(
             any2EvmMessage.messageId,
-            any2EvmMessage.sourceChainSelector, // fetch the source chain identifier (aka selector)
-            abi.decode(any2EvmMessage.sender, (address)), // abi-decoding of the sender address,
-            any2EvmMessage.data, // received data
+            any2EvmMessage.sourceChainSelector,
+            abi.decode(any2EvmMessage.sender, (address)),
+            any2EvmMessage.data,
             any2EvmMessage.destTokenAmounts[0].token,
             any2EvmMessage.destTokenAmounts[0].amount
         );
     }
 
-    /// @notice Allows the owner to retry a failed message in order to unblock the associated tokens.
-    /// @param messageId The unique identifier of the failed message.
-    /// @param beneficiary The address to which the tokens will be sent.
-    /// @dev This function is only callable by the contract owner. It changes the status of the message
-    /// from 'failed' to 'resolved' to prevent reentry and multiple retries of the same message.
     function retryFailedMessage(
         bytes32 messageId,
         address beneficiary
     ) external onlyOwner {
-        // Check if the message has failed; if not, revert the transaction.
         if (s_failedMessages.get(messageId) != uint256(ErrorCode.FAILED))
             revert MessageNotFailed(messageId);
 
-        // Set the error code to RESOLVED to disallow reentry and multiple retries of the same failed message.
         s_failedMessages.set(messageId, uint256(ErrorCode.RESOLVED));
 
-        // Retrieve the content of the failed message.
         Client.Any2EVMMessage memory message = s_messageContents[messageId];
 
-        // This example expects one token to have been sent.
-        // Transfer the associated tokens to the specified receiver as an escape hatch.
         IERC20(message.destTokenAmounts[0].token).safeTransfer(
             beneficiary,
             message.destTokenAmounts[0].amount
         );
 
-        // Emit an event indicating that the message has been recovered.
         emit MessageRecovered(messageId);
     }
 
@@ -210,7 +171,6 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
     ) external view returns (FailedMessage[] memory) {
         uint256 length = s_failedMessages.length();
 
-        // Calculate the actual number of items to return (can't exceed total length or requested limit)
         uint256 returnLength = (offset + limit > length)
             ? length - offset
             : limit;
@@ -218,7 +178,6 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
             returnLength
         );
 
-        // Adjust loop to respect pagination (start at offset, end at offset + limit or total length)
         for (uint256 i = 0; i < returnLength; i++) {
             (bytes32 messageId, uint256 errorCode) = s_failedMessages.at(
                 offset + i
