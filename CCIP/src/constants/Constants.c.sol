@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.25;
 
 library ChainIDMainnet {
     uint8 public constant ETHEREUM = 1;

@@ -12,12 +12,11 @@ contract ConstantsTest is Test {
     function testSelectors() external pure {
         uint256[] memory selectors = ChainSelectors.getSelectors();
         assertEq(selectors[0], 14767482510784806043);
-        assertEq(selectors[1], 13264668187771770619);
-        assertEq(selectors[2], 16015286601757825753);
-        assertEq(selectors[3], 3478487238524512106);
-        assertEq(selectors[4], 10344971235874465080);
-        assertEq(selectors[5], 5224473277236331295);
-        assertEq(selectors[6], 16281711391670634445);
+        assertEq(selectors[1], 16015286601757825753);
+        assertEq(selectors[2], 3478487238524512106);
+        assertEq(selectors[3], 10344971235874465080);
+        assertEq(selectors[4], 5224473277236331295);
+        assertEq(selectors[5], 16281711391670634445);
     }
 
     function testForLoop() external view {

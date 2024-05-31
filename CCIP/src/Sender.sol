@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.25;
 
 import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol";
 import {OwnerIsCreator} from "@chainlink/contracts-ccip/src/v0.8/shared/access/OwnerIsCreator.sol";
@@ -58,33 +58,25 @@ contract Sender is OwnerIsCreator {
         i_usdcToken = IERC20(_usdcToken);
     }
 
-    /// @dev Set the receiver contract for a given destination chain.
-    /// @notice This function can only be called by the owner.
-    /// @param _destinationChainSelector The selector of the destination chain.
-    /// @param _receiver The receiver contract on the destination chain .
-    function setReceiverForDestinationChain(
+    //function setReceiverForDestinationChain(
+    //uint64 _destinationChainSelector,
+    //address _receiver
+    //) external onlyOwner validateDestinationChain(_destinationChainSelector) {
+    //if (_receiver == address(0)) revert InvalidReceiverAddress();
+    //s_receivers[_destinationChainSelector] = _receiver;
+    //}
+
+    function setGasLimitAndRecieverForDestinationChain(
         uint64 _destinationChainSelector,
+        uint256 _gasLimit,
         address _receiver
     ) external onlyOwner validateDestinationChain(_destinationChainSelector) {
+        if (_gasLimit == 0) revert InvalidGasLimit();
+        s_gasLimits[_destinationChainSelector] = _gasLimit;
         if (_receiver == address(0)) revert InvalidReceiverAddress();
         s_receivers[_destinationChainSelector] = _receiver;
     }
 
-    /// @dev Set the gas limit for a given destination chain.
-    /// @notice This function can only be called by the owner.
-    /// @param _destinationChainSelector The selector of the destination chain.
-    /// @param _gasLimit The gas limit on the destination chain .
-    function setGasLimitForDestinationChain(
-        uint64 _destinationChainSelector,
-        uint256 _gasLimit
-    ) external onlyOwner validateDestinationChain(_destinationChainSelector) {
-        if (_gasLimit == 0) revert InvalidGasLimit();
-        s_gasLimits[_destinationChainSelector] = _gasLimit;
-    }
-
-    /// @dev Delete the receiver contract for a given destination chain.
-    /// @notice This function can only be called by the owner.
-    /// @param _destinationChainSelector The selector of the destination chain.
     function deleteReceiverForDestinationChain(
         uint64 _destinationChainSelector
     ) external onlyOwner validateDestinationChain(_destinationChainSelector) {
@@ -103,8 +95,8 @@ contract Sender is OwnerIsCreator {
     function sendMessagePayLINK(
         uint64 _destinationChainSelector,
         address _beneficiary,
-        uint256 _amount,
-        uint256 _index
+        uint64 _amount,
+        uint8 _index
     )
         external
         onlyOwner
