@@ -223,10 +223,44 @@ a:hover {
   background-color: darken($color-coffee, 10%);
 }
 
+.grid-item-x {
+  flex: 0 0 100%;
+  margin: 1rem;
+  background: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.3s ease-in-out;
+  position: relative;
+
+  .img-container-x img {
+    display: block;
+    width: 90%;
+    height: auto;
+    margin: 0 auto;
+  }
+  
+  h2, p {
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+    margin: 10px auto;
+  }
+}
+
 @media (min-width: 768px) {
   .grid-item {
     flex: 0 0 calc(50% - 1rem);
     max-width: calc(50% - 1rem);
+  }
+
+  .grid-item-x .img-container-x img {
+    width: 50%;
+  }
+  
+  .grid-item-x h2, .grid-item-x p {
+    width: 50%;
   }
 }
 
