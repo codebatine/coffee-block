@@ -40,7 +40,7 @@ export const Home = () => {
         {applications.length > 0 ? 
         <>{applications.map((application, index) => application.published === "yes" && (
         <div key={application.id} className="grid-item">
-          <Link to={`/coffeblock/details/${application.id}`}><div className="img-container"><img src={images[index % images.length] || coffee1} alt="Coffee cup" /></div></Link>
+          <Link to={`/coffeblock/details/${application.id}`}><div className="img-container"><img src={application.image.src} alt="Coffee cup" /></div></Link>
           <div className="caption"><h2>{application.company || "company missing"}</h2></div>
           <h2>{application.area || "area missing"}</h2>
           <p>{application.reason || "reason missing"}</p>

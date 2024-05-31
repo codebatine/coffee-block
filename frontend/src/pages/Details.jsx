@@ -2,6 +2,8 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import coffee1 from '../content/img/coffee-1-grid.jpg';
+import { funderSend } from "../services/blockchainServices";
+import Application from "../models/Application";
 
 export const Details = () => {
 
@@ -29,23 +31,31 @@ export const Details = () => {
     setFundingForm(prevForm => ({...prevForm, [name]: value}))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("funding complte")
+    console.log("!submit pressed");
+    try {
+      const reponse = await funderSend(application.project)
+      console.log("!funderSend complete", reponse);
+    } catch (error) {
+      console.log(error);
+    }
   }
+
+
 
   return (
     <>
     <div className="main-content-x">
       <div className="grid-container">
-          {application &&         
+          {application !== null &&         
         <div className="grid-item-x">
         <h2>Company: {application.company || 'N/A'}</h2>
         <h2>Area: {application.area || 'N/A'}</h2>
         <p>Reason: {application.reason || 'N/A'}</p>
         <p>Amount: {application.amount || 'N/A'}</p>
         <p>Time: {application.time || 'N/A'}</p>
-        <p>Date: {application.lastUpdate || 'N/A'}</p>
+        <p>Details last updated: {new Date(application.lastUpdate).toLocaleDateString("en-US") || 'N/A'}</p>
         <div className="img-container-x"><img src={application.image.src} alt="Coffee cup" /></div>
         </div>
       }

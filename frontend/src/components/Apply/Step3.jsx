@@ -11,9 +11,7 @@ export const Step3 = ({infoStatus, setInfoStatus, setProjectId}) => {
   const [applications, setApplications] = useState([])
   const [application, setApplication] = useState({})
   const [selectedId, setSelectedId] = useState("")
-
-
-
+  
   const handleFetch = async (e) => {
     e.preventDefault();
       try {
@@ -29,9 +27,7 @@ export const Step3 = ({infoStatus, setInfoStatus, setProjectId}) => {
     }
 
   const handleChangeContract = async (e) => {
-    console.log(e.target.value);
     const id = e.target.selectedOptions[0].getAttribute("data-id")
-    console.log(id);
     if(e.target.name === "company"){
       setSelectedId(id)
     }
@@ -46,6 +42,7 @@ export const Step3 = ({infoStatus, setInfoStatus, setProjectId}) => {
     if(!selectedId) {return} else{
     const application = applications.find((c) => {return c.id === selectedId})
     setApplication(application);
+
   }
   }, [selectedId])
 
@@ -55,6 +52,7 @@ export const Step3 = ({infoStatus, setInfoStatus, setProjectId}) => {
     form.amount = application.amount;
     form.index = application.index;
     form.owner = application.owner;
+    form.owner = application.project;
     form.lastUpdate = Date.now();
     form.published = "no";
       
@@ -79,7 +77,8 @@ export const Step3 = ({infoStatus, setInfoStatus, setProjectId}) => {
         {infoStatus !== "Submitted" ?  (
           <>
         <div className="button-control">
-          <button className="application-button" onClick={handleFetch}>Retrieve your contract</button>
+          <button className="application-button" onClick={handleFetch}>Retrieve your contracts</button>
+        <span>{application.project}</span>
         </div>
       {fetchStatus === "fetched" && (
       <>

@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from "react"
 import Application from "../../models/Application"
 import axios from 'axios';
-import { createApplicationContract, createContract, getTransactionDetails } from '../../services/blockchainServices';
+import { createContract } from '../../services/blockchainServices';
 
 export const Step2 = ({contractStatus, setContractStatus}) => {
 

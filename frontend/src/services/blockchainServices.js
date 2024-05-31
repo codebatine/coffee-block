@@ -1,9 +1,11 @@
 import { ethers } from 'ethers';
 import {
-  FUJI_CONTRACT_ADDRESS,
-  POLYGONTESTNET_CONTRACT_ADDRESS,
+  DEPLOYER_CONTRACT,
+  SENDER_CONTRACT,
   abi_a,
   abi_b,
+  abi_ccip_sender,
+  abi_ccip_receiver,
 } from './config.js';
 
 // WALLET FUNCTIONS
@@ -49,7 +51,7 @@ export const getAddress = async () => {
 
 export const getProjctOwner = async () => {
   try {
-    const contactAddress = '0x8B70bEE8a47ff616366cbC41679f6e6aD5d190d6';
+    const contactAddress = '0x68B0fcF47729688097709d98Fa4DEc4643A96959';
     const writeContract = await loadWriteContract_b(contactAddress);
     const projectOwner = await writeContract.i_owner();
     const usdcAddress = await writeContract.getUsdAddress();
@@ -64,30 +66,14 @@ export const getProjctOwner = async () => {
 };
 
 export const createContract = async () => {
+  const contractAddress = DEPLOYER_CONTRACT.polygon_amoy;
   try {
-    const contractAddress = POLYGONTESTNET_CONTRACT_ADDRESS;
     const writeContract = await loadWriteContract_a(contractAddress);
-    console.log('!writeContract:', writeContract);
-
     const transaction = await writeContract.createNewProject();
-    console.log('!transaction:', transaction);
-
     const result = await transaction.wait();
-    console.log(result);
-    // const txDetails = await getTransactionDetails(result.hash);
-    // console.log('!txDetails', txDetails);
-    // const fetchedContract = await fetchContractAddress();
-    // console.log(fetchedContract);
 
-    // const contract = await writeContract.on('ProjectCreated', (owner, project));
-    // console.log(contract);
-
-    // Skapa en kontraktsinstans
     const signer = await getAddress();
-    console.log('!signer', signer);
-    // const contract = new ethers.Contract(contractAddress, abi_a, signer);
 
-    // Lyssna på ProjectCreated-eventet
     writeContract.on('ProjectCreated', (owner, project) => {
       console.log(
         `New project created by ${owner}. Project address: ${project}`
@@ -108,26 +94,8 @@ export const createContract = async () => {
 
     const newestProject = projects.at(-1);
     const projectIndex = projects.length + 1;
-    console.log('!newestProject:', newestProject);
 
     return { newestProject, projectIndex, signer };
-    //const projectCount = await loadReadContract(
-    //FUJI_CONTRACT_ADDRESS,
-    //).projectCount();
-    //console.log("!projectCount:", projectCount);
-    //let ownerPorjects = [];
-    //for (i = 0; i < projectCount; i++) {
-    //const project = await writeContract.projectList(i);
-    //console.log("!project:", project);
-    //const writeContract_b = await loadWriteContract_b(project);
-    //const projectOwner = await writeContract_b.getOwner();
-    //if (projectOwner == signer) {
-    //ownerPorjects.push(project);
-    //}
-    //}
-    //console.log("!ownerProjects:", ownerPorjects);
-    //const newestProject = ownerPorjects.at(-1);
-    //console.log("!newestProject:", newestProject);
   } catch (error) {
     console.error('Error in createApplicationContract:', error);
     throw error;
@@ -146,7 +114,6 @@ export const loadWriteContract_a = async (contractAddress) => {
     abi_a,
     signer
   );
-  // console.log('!applicationWriteContract:', applicationWriteContract);
 
   return applicationWriteContract;
 };
@@ -161,13 +128,12 @@ export const loadWriteContract_b = async (contractAddress) => {
     abi_b,
     window.provider
   );
-  // console.log('!applicationWriteContract:', applicationWriteContract);
 
   return applicationWriteContract;
 };
 
 export const fetchContractAddress = async () => {
-  const contractAddress = FUJI_CONTRACT_ADDRESS;
+  const contractAddress = DEPLOYER_CONTRACT.avax_fuji;
   try {
     const readContract = await loadWriteContract_a(contractAddress);
     return await readContract.ProjectCreated();
@@ -202,40 +168,79 @@ export const loadReadContract = async (contractAddress) => {
   return applicationReadContract;
 };
 
+// Sender funding contract
+
+export const funderSend = async (projectAddress) => {
+  console.log('!funderSend started');
+
+  try {
+    const contractAddress = SENDER_CONTRACT.eth_sepholia;
+    const writeContract = await loadWriteContract_c(contractAddress);
+    console.log('!writeContract', writeContract);
+
+    const gasLimit =
+      await writeContract.setGasLimitAndRecieverForDestinationChain(
+        11155111,
+        300000,
+        RECIEVER_CONTRACT.polygon_amoy
+      );
+
+    const result = await gasLimit.wait();
+
+    console.log('!gasLimit set', result);
+    return gasLimit;
+  } catch (error) {}
+};
+
+export const loadWriteContract_c = async (contractAddress) => {
+  if (!contractAddress) {
+    throw new Error('Contract address is required');
+  }
+
+  const applicationWriteContract = new ethers.Contract(
+    contractAddress,
+    abi_ccip_sender,
+    window.provider
+  );
+  // console.log('!applicationWriteContract:', applicationWriteContract);
+
+  return applicationWriteContract;
+};
+
 //create application
 
-export const createApplicationContract = async (contractInput) => {
-  try {
-    const { company, amount } = contractInput;
+// export const createApplicationContract = async (contractInput) => {
+//   try {
+//     const { company, amount } = contractInput;
 
-    const parsedAmount = parseInt(amount);
-    console.log('!contract input', company, parsedAmount);
+//     const parsedAmount = parseInt(amount);
+//     console.log('!contract input', company, parsedAmount);
 
-    const functionInput = {
-      company,
-      parsedAmount,
-    };
+//     const functionInput = {
+//       company,
+//       parsedAmount,
+//     };
 
-    const contractAddress = FUJI_CONTRACT_ADDRESS;
-    const writeContract = await loadWriteContract_a(contractAddress);
-    console.log('!writeContract:', writeContract);
+//     const contractAddress = DEPLOYER_CONTRACT.avax_fuji;
+//     const writeContract = await loadWriteContract_a(contractAddress);
+//     console.log('!writeContract:', writeContract);
 
-    const transaction = await writeContract.createNewProject(
-      functionInput
-      // {
-      //   gasLimit: 300000,
-      // }
-    );
-    console.log('!transaction:', transaction);
+//     const transaction = await writeContract.createNewProject(
+//       functionInput
+//       // {
+//       //   gasLimit: 300000,
+//       // }
+//     );
+//     console.log('!transaction:', transaction);
 
-    const result = await transaction.wait();
-    console.log(result);
-    return result;
-  } catch (error) {
-    console.error('Error in createApplicationContract:', error);
-    throw error;
-  }
-};
+//     const result = await transaction.wait();
+//     console.log(result);
+//     return result;
+//   } catch (error) {
+//     console.error('Error in createApplicationContract:', error);
+//     throw error;
+//   }
+// };
 
 // export const loadWriteContract_a = async (contractAddress) => {
 //   if (!contractAddress) {
@@ -258,31 +263,31 @@ export const createApplicationContract = async (contractInput) => {
 
 // fetch hash info
 
-export const getTransactionDetails = async (hash) => {
-  try {
-    // Fetch transaction receipt
-    const receipt = await provider.getTransactionReceipt(hash);
-    console.log('Receipt:', receipt);
-    // Decode logs
-    const logs = receipt.logs;
-    console.log('logs', logs);
+// export const getTransactionDetails = async (hash) => {
+//   try {
+//     // Fetch transaction receipt
+//     const receipt = await provider.getTransactionReceipt(hash);
+//     console.log('Receipt:', receipt);
+//     // Decode logs
+//     const logs = receipt.logs;
+//     console.log('logs', logs);
 
-    const eventInterface = new ethers.utils.Interface(abi_a);
+//     const eventInterface = new ethers.utils.Interface(abi_a);
 
-    logs.forEach((log) => {
-      try {
-        const decodedLog = eventInterface.parseLog(log);
-        if (decodedLog.name === 'ProjectCreated') {
-          console.log(
-            'New Contract Address:',
-            decodedLog.args.newProjectAddress
-          );
-        }
-      } catch (error) {
-        // Ignore log entries that can't be decoded
-      }
-    });
-  } catch (error) {
-    console.error('Error fetching transaction receipt and logs:', error);
-  }
-};
+//     logs.forEach((log) => {
+//       try {
+//         const decodedLog = eventInterface.parseLog(log);
+//         if (decodedLog.name === 'ProjectCreated') {
+//           console.log(
+//             'New Contract Address:',
+//             decodedLog.args.newProjectAddress
+//           );
+//         }
+//       } catch (error) {
+//         // Ignore log entries that can't be decoded
+//       }
+//     });
+//   } catch (error) {
+//     console.error('Error fetching transaction receipt and logs:', error);
+//   }
+// };
