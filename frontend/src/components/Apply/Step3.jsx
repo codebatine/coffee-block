@@ -52,7 +52,7 @@ export const Step3 = ({infoStatus, setInfoStatus, setProjectId}) => {
     form.amount = application.amount;
     form.index = application.index;
     form.owner = application.owner;
-    form.owner = application.project;
+    form.project = application.project;
     form.lastUpdate = Date.now();
     form.published = "no";
       

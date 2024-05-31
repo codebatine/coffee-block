@@ -20,6 +20,11 @@ export const SENDER_CONTRACT = {
   eth_sepholia: '0x7ab4da87392d1576371695993179E5Fc7dB62113',
 };
 
+export const CHAIN_SELECTOR = {
+  eth_sepolia: '16015286601757825753',
+  polygon_amoy: '16281711391670634445',
+};
+
 export const abi_a = ABI_A.abi;
 export const abi_b = ABI_B.abi;
 export const abi_ccip_sender = ABI_C.abi;

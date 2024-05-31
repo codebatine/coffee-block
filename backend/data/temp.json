@@ -1,19 +1,5 @@
 [
   {
-    "company": "Java Gems",
-    "amount": "7500",
-    "index": 1,
-    "owner": "0x4b6123gE11078e180675865b93ff5c3478318b3d",
-    "area": "Sumatra",
-    "reason": "Organic fertilizers",
-    "time": "6 months",
-    "name": "Putri Anggraini",
-    "email": "contact@javagems.io",
-    "published": "no",
-    "id": "5c6df4c6a15640eaa7e3078b7052b8d",
-    "lastUpdate": 1716996208437
-  },
-  {
     "company": "Roast & Co",
     "amount": "2300",
     "index": 2,

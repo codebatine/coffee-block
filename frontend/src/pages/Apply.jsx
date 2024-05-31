@@ -30,7 +30,7 @@ export const Apply = () => {
   }
 
   const handleNavigate = () => {
-    navigate(`/coffeblock/details/${projectId}`);
+    navigate(`/coffeeblock/details/${projectId}`);
   }
 
   return (

@@ -6,12 +6,20 @@ import {
   abi_b,
   abi_ccip_sender,
   abi_ccip_receiver,
+  CHAIN_SELECTOR,
+  RECIEVER_CONTRACT,
 } from './config.js';
+
+const provider = new ethers.BrowserProvider(window.ethereum);
 
 // WALLET FUNCTIONS
 
 export const requestAccount = async () => {
+  console.log('1');
+
   try {
+    console.log('2');
+
     const result = await window.ethereum.request({
       method: 'eth_requestAccounts',
     });
@@ -106,6 +114,9 @@ export const loadWriteContract_a = async (contractAddress) => {
   if (!contractAddress) {
     throw new Error('Contract address is required');
   }
+
+  console.log('provider', provider);
+
   const signer = await provider.getSigner();
   console.log('!signer', signer);
 
@@ -173,34 +184,51 @@ export const loadReadContract = async (contractAddress) => {
 export const funderSend = async (projectAddress) => {
   console.log('!funderSend started');
 
-  try {
-    const contractAddress = SENDER_CONTRACT.eth_sepholia;
-    const writeContract = await loadWriteContract_c(contractAddress);
-    console.log('!writeContract', writeContract);
+  // try {
+  const contractAddress = SENDER_CONTRACT.eth_sepholia;
+  console.log('contract address', contractAddress);
 
-    const gasLimit =
-      await writeContract.setGasLimitAndRecieverForDestinationChain(
-        11155111,
-        300000,
-        RECIEVER_CONTRACT.polygon_amoy
-      );
+  const writeContract = await loadWriteContract_c(contractAddress);
+  console.log('!writeContract', writeContract);
 
-    const result = await gasLimit.wait();
+  console.log('1');
+  console.log(CHAIN_SELECTOR.polygon_amoy);
+  console.log(RECIEVER_CONTRACT.polygon_amoy);
 
-    console.log('!gasLimit set', result);
-    return gasLimit;
-  } catch (error) {}
+  const chainSelector = CHAIN_SELECTOR.polygon_amoy;
+  const gasLimitValue = 300000;
+  const receiverContract = RECIEVER_CONTRACT.polygon_amoy;
+
+  const gasLimit =
+    await writeContract.setGasLimitAndRecieverForDestinationChain(
+      chainSelector,
+      gasLimitValue,
+      receiverContract
+    );
+  console.log('2');
+
+  await gasLimit.wait();
+
+  console.log('!gasLimit set', gasLimit);
+  return gasLimit;
+  // } catch (error) {
+  //   console.log('funkade inte', error);
+  // }
 };
 
 export const loadWriteContract_c = async (contractAddress) => {
-  if (!contractAddress) {
-    throw new Error('Contract address is required');
-  }
+  console.log('!load start');
+
+  console.log('provider', provider);
+
+  const signer = await provider.getSigner();
+
+  console.log('signer', signer);
 
   const applicationWriteContract = new ethers.Contract(
     contractAddress,
     abi_ccip_sender,
-    window.provider
+    signer
   );
   // console.log('!applicationWriteContract:', applicationWriteContract);
 
