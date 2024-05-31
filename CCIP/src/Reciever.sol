@@ -52,7 +52,7 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
     }
 
     IERC20 private immutable i_usdcToken;
-    IGoFundMe private _gofundme;
+    IGoFundMe private i_gofundme;
 
     mapping(uint64 => address) public s_senders;
     mapping(bytes32 => Client.Any2EVMMessage) public s_messageContents;
@@ -75,8 +75,8 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
     }
 
     function setProjectContract(address gofundme) external {
-        _gofundme = IGoFundMe(gofundme);
-        i_usdcToken.safeApprove(address(_gofundme), type(uint256).max);
+        i_gofundme = IGoFundMe(gofundme);
+        i_usdcToken.safeApprove(address(i_gofundme), type(uint256).max);
     }
 
     function setSenderForSourceChain(
@@ -129,12 +129,14 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
                 any2EvmMessage.destTokenAmounts[0].token
             );
 
-        (bool success, bytes memory returnData) = address(_gofundme).call(
-            any2EvmMessage.data
-        );
+        //(bool success, bytes memory returnData) = address(i_gofundme).call(
+        //any2EvmMessage.data
+        //);
+        //
+        //if (!success) revert CallToProjectFailed();
+        //if (returnData.length > 0) revert NoReturnDataExpected();
 
-        if (!success) revert CallToProjectFailed();
-        if (returnData.length > 0) revert NoReturnDataExpected();
+        i_gofundme.fundFromContract(any2EvmMessage.destTokenAmounts[0].amount);
 
         emit MessageReceived(
             any2EvmMessage.messageId,
