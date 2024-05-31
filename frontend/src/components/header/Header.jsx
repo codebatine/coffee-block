@@ -19,28 +19,28 @@ export const Header = () => {
         <img src={logo} alt="Coffee Block Logo" className="logo" />
         <ul className={`nav-links ${isOpen ? 'open' : ''}`}>
           <li>
-            <NavLink to="/coffeblock/" end className={({ isActive }) => (isActive ? 'active-link' : '')} onClick={closeMenu}>
+            <NavLink to="/coffeeblock/" end className={({ isActive }) => (isActive ? 'active-link' : '')} onClick={closeMenu}>
               Home
             </NavLink>
           </li>
           
           <li>
-            <NavLink to="/coffeblock/viewall" className={({ isActive }) => (isActive ? 'active-link' : '')} onClick={closeMenu}>
+            <NavLink to="/coffeeblock/viewall" className={({ isActive }) => (isActive ? 'active-link' : '')} onClick={closeMenu}>
               Projects
             </NavLink>
           </li>
           <li>
-            <NavLink to="/coffeblock/apply" className={({ isActive }) => (isActive ? 'active-link' : '')} onClick={closeMenu}>
+            <NavLink to="/coffeeblock/apply" className={({ isActive }) => (isActive ? 'active-link' : '')} onClick={closeMenu}>
               Apply
             </NavLink>
           </li>
           <li>
-            <NavLink to="/coffeblock/about" className={({ isActive }) => (isActive ? 'active-link' : '')} onClick={closeMenu}>
+            <NavLink to="/coffeeblock/about" className={({ isActive }) => (isActive ? 'active-link' : '')} onClick={closeMenu}>
               About
             </NavLink>
           </li>
           <li>
-            <NavLink to="/coffeblock/admin" className={({ isActive }) => (isActive ? 'active-link' : '')} onClick={closeMenu}>
+            <NavLink to="/coffeeblock/admin" className={({ isActive }) => (isActive ? 'active-link' : '')} onClick={closeMenu}>
               Admin
             </NavLink>
           </li>

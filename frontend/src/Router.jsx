@@ -11,17 +11,17 @@ import { Admin } from "./pages/Admin";
 
 export const router = createBrowserRouter([
   {
-    path: "/coffeblock/",
+    path: "/coffeeblock/",
     element: <Layout />,
     errorElement: <NotFound />,
     children: [
-      { path: "/coffeblock/", index: true, element: <Home /> },
-      { path: "/coffeblock/viewall", element: <Viewall /> },
-      { path: "/coffeblock/details/:id", element: <Details /> },
-      { path: "/coffeblock/loan", element: <Loan /> },
-      { path: "/coffeblock/apply", element: <Apply /> },
-      { path: "/coffeblock/about", element: <About /> },
-      { path: "/coffeblock/admin", element: <Admin /> },
+      { path: "/coffeeblock/", index: true, element: <Home /> },
+      { path: "/coffeeblock/viewall", element: <Viewall /> },
+      { path: "/coffeeblock/details/:id", element: <Details /> },
+      { path: "/coffeeblock/loan", element: <Loan /> },
+      { path: "/coffeeblock/apply", element: <Apply /> },
+      { path: "/coffeeblock/about", element: <About /> },
+      { path: "/coffeeblock/admin", element: <Admin /> },
     ],
   },
 ]);
