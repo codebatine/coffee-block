@@ -6,16 +6,16 @@ import {Script} from "forge-std/Script.sol";
 import {Sender} from "../src/Sender.sol";
 import {HelperConfigSender} from "./HelperConfigSender.s.sol";
 
-contract DeployReciever is Script {
+contract DeploySender is Script {
     function run() public returns (Sender) {
         HelperConfigSender helperConfigReciever = new HelperConfigSender();
         (address router, address usdcAddress, address linkAdderss) = (
             helperConfigReciever.networkConfig()
         );
 
-        vm.startBroadcast();
+        //        vm.startBroadcast();
         Sender sender = new Sender(router, linkAdderss, usdcAddress);
-        vm.stopBroadcast();
+        //      vm.stopBroadcast();
         return sender;
     }
 }

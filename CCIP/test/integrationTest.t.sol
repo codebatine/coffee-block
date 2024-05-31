@@ -87,19 +87,14 @@ contract RecieverTest is Test {
         vm.startPrank(Alice);
         receiver.setSenderForSourceChain(
             ChainSelector_SEPOLIA,
-            address(sender),
-            address(goFundMe)
+            address(sender)
         );
         vm.stopPrank();
     }
 
     function test_setSenderForSourceChain() public {
         vm.prank(Alice);
-        receiver.setSenderForSourceChain(
-            ChainSelector_POLY,
-            address(sender),
-            address(goFundMe)
-        );
+        receiver.setSenderForSourceChain(ChainSelector_POLY, address(sender));
         assertEq(receiver.s_senders(ChainSelector_POLY), address(sender));
     }
 
