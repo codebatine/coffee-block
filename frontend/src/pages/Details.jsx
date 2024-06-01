@@ -2,6 +2,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { funderSend, requestAccount } from "../services/blockchainServices";
+import { SENDER_CONTRACT } from "../services/config";
 
 export const Details = () => {
 
@@ -53,7 +54,7 @@ export const Details = () => {
     e.preventDefault();
     console.log("!submit pressed");
     try {
-      const reponse = await funderSend(fundingForm.amount, application.project)
+      const reponse = await funderSend(fundingForm.amount, application.index)
       
       console.log("!funderSend complete", reponse);
     } catch (error) {
@@ -107,8 +108,8 @@ export const Details = () => {
               Wallet {wallet} is connected.
             </div>
             <div>
-              <span>Transfer {fundingForm.amount} USDC to ABCDEF.<br/></span>
-              <span>Transfer 2 LINK to GHIJKL.<br/></span>
+              <span>Transfer {fundingForm.amount} USDC to {SENDER_CONTRACT.eth_sepholia}.<br/></span>
+              <span>Transfer 2 LINK to {SENDER_CONTRACT.eth_sepholia}.<br/></span>
               <span>Wait for both of the transactions to finish before doing the last step.<br/></span>
             </div>
             <div className="button-control">
