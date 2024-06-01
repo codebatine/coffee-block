@@ -73,6 +73,14 @@ a {
 
 p {
   font-family: "Roboto", sans-serif;
+  max-width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+  
+  @media (min-width: 1024px) {
+    max-width: 50%;
+  }
+  
 }
 
 h1 {
