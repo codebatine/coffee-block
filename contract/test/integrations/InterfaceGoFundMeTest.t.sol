@@ -20,9 +20,9 @@ contract InterfaceGoFundMeTest is Test {
     address public usdcTokenAddress;
 
     function setUp() public {
-        //vm.deal(alice, 10 ether);
-        //vm.prank(alice);
-        deployer = new ControllerGoFundMe();
+        vm.deal(alice, 10 ether);
+        vm.prank(alice);
+        deployer = new ControllerGoFundMe(usdcTokenAddress);
         vm.prank(alice);
         deployer.createNewProject();
         firstProject = deployer.getProject(0);
@@ -34,6 +34,17 @@ contract InterfaceGoFundMeTest is Test {
     function testUsdcAddress() public {
         console.log("usdcTokenAddress Interface", usdcTokenAddress);
         assertEq(firstProject.getUsdAddress(), usdcTokenAddress);
+    }
+
+    function testcrossChainDonation() public {
+        uint256 usdcAmount = 100;
+        vm.prank(alice);
+        usdcToken.approve(address(deployer), usdcAmount * 1e6);
+        vm.prank(alice);
+        deployer.crossChainDonation(0, usdcAmount);
+        firstProject.fund(usdcAmount);
+        uint256 amountFunded = firstProject.getTotalBalance();
+        assertEq(amountFunded, usdcAmount * 1e6);
     }
 
     function testToSeeCreatedNewProject() public {

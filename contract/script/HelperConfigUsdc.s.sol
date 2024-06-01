@@ -5,7 +5,7 @@ pragma solidity ^0.8.18;
 import {Script} from "forge-std/Script.sol";
 import {Constants, ConstChainId, ConstUsdctokenAddress} from "../src/constants/Constants.c.sol";
 
-//import {ERC20Mock} from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
+import {ERC20Mock} from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
 
 contract HelperConfigUsdc is Script {
     NetworkConfig public activeNetworkConfig;
@@ -25,10 +25,9 @@ contract HelperConfigUsdc is Script {
             activeNetworkConfig = getAvalancheFujiConfig();
         } else if (block.chainid == ConstChainId.POLYGON_AMOY) {
             activeNetworkConfig = getPolygonTestUsdcConfig();
+        } else {
+            activeNetworkConfig = getAnvilUsdcConfig();
         }
-        //else {
-        //activeNetworkConfig = getAnvilUsdcConfig();
-        //}
     }
 
     function getSepoliaUsdcConfig() public pure returns (NetworkConfig memory) {
@@ -74,16 +73,16 @@ contract HelperConfigUsdc is Script {
         return polygonAmoyConfig;
     }
 
-    //function getAnvilUsdcConfig() public returns (NetworkConfig memory) {
-    //ERC20Mock USDC = new ERC20Mock();
-    //USDC.mint(
-    //0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
-    //100 * Constants.USD_DECIMALS
-    //);
-    //
-    //NetworkConfig memory anvilConfig = NetworkConfig({
-    //usdcTokenAddress: address(USDC)
-    //});
-    //return anvilConfig;
-    //}
+    function getAnvilUsdcConfig() public returns (NetworkConfig memory) {
+        ERC20Mock USDC = new ERC20Mock();
+        USDC.mint(
+            0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
+            100 * Constants.USD_DECIMALS
+        );
+
+        NetworkConfig memory anvilConfig = NetworkConfig({
+            usdcTokenAddress: address(USDC)
+        });
+        return anvilConfig;
+    }
 }

@@ -14,7 +14,7 @@
  * This cotract will also use Chainlink pricefeed to get the price of the token that will be used to fund the campaign.
  */
 
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.25;
 
 import {Constants} from "./constants/Constants.c.sol";
 import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -82,7 +82,6 @@ contract GoFundMe {
 
     function fundFromContract(uint256 _amount) external {
         uint256 amountInDecimals = _amount * Constants.USD_DECIMALS;
-        //        usdc.transferFrom(_from, address(this), amountInDecimals);
         usdc.safeTransferFrom(msg.sender, address(this), amountInDecimals);
         m_donations[msg.sender] += amountInDecimals;
         totalBalance += amountInDecimals;

@@ -52,7 +52,8 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
     }
 
     IERC20 private immutable i_usdcToken;
-    address private immutable i_controller;
+    IGoFundMe private i_goFundMe;
+    IControllerGoFundMe private immutable i_controller;
 
     mapping(uint64 => address) public s_senders;
     mapping(bytes32 => Client.Any2EVMMessage) public s_messageContents;
@@ -76,8 +77,9 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
     ) CCIPReceiver(_router) {
         if (_usdcToken == address(0)) revert InvalidUsdcToken();
         if (_controller == address(0)) revert InvalidController();
-        i_controller = _controller;
+        i_controller = IControllerGoFundMe(i_controller);
         i_usdcToken = IERC20(_usdcToken);
+        i_usdcToken.safeApprove(_controller, type(uint256).max);
     }
 
     function setSenderForSourceChain(
@@ -130,21 +132,24 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
                 any2EvmMessage.destTokenAmounts[0].token
             );
 
-        //(bool success, bytes memory returnData) = address(i_gofundme).call(
-        //any2EvmMessage.data
-        //);
-        //
-        //if (!success) revert CallToProjectFailed();
-        //if (returnData.length > 0) revert NoReturnDataExpected();
+        uint256 _index = abi.decode(any2EvmMessage.data, (uint256));
+        address projectIndex = i_controller.getProject(_index);
 
-        // i_gofundme.fundFromContract(any2EvmMessage.destTokenAmounts[0].amount);
+        i_goFundMe = IGoFundMe(projectIndex);
 
-        (bool success, bytes memory returnData) = i_controller.call(
-            any2EvmMessage.data
+        i_usdcToken.safeApprove(
+            address(projectIndex),
+            any2EvmMessage.destTokenAmounts[0].amount
         );
 
-        if (!success) revert CallToProjectFailed();
-        if (returnData.length > 0) revert NoReturnDataExpected();
+        i_goFundMe.fundFromContract(any2EvmMessage.destTokenAmounts[0].amount);
+
+        //(bool success, bytes memory returnData) = address(i_controller).call(
+        //any2EvmMessage.data
+        //);
+
+        //if (!success) revert CallToProjectFailed();
+        // if (returnData.length > 0) revert NoReturnDataExpected();
 
         emit MessageReceived(
             any2EvmMessage.messageId,
@@ -154,6 +159,10 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
             any2EvmMessage.destTokenAmounts[0].token,
             any2EvmMessage.destTokenAmounts[0].amount
         );
+    }
+
+    function transferTokenToProject(address project, uint256 _amount) external {
+        i_usdcToken.safeTransfer(project, _amount);
     }
 
     function retryFailedMessage(

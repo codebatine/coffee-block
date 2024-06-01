@@ -28,7 +28,7 @@ contract Sender is OwnerIsCreator {
         bytes32 indexed messageId,
         uint64 indexed destinationChainSelector,
         address indexed receiver,
-        uint64 index,
+        uint256 ProjectIndex,
         address token,
         uint256 tokenAmount,
         address feeToken,
@@ -77,8 +77,8 @@ contract Sender is OwnerIsCreator {
 
     function sendMessagePayLINK(
         uint64 _destinationChainSelector,
-        uint64 _index,
-        uint64 _amount
+        uint256 _ProjectIndex,
+        uint256 _amount
     )
         external
         validateDestinationChain(_destinationChainSelector)
@@ -102,11 +102,7 @@ contract Sender is OwnerIsCreator {
         // Create an EVM2AnyMessage struct in memory with necessary information for sending a cross-chain message
         Client.EVM2AnyMessage memory evm2AnyMessage = Client.EVM2AnyMessage({
             receiver: abi.encode(receiver), // ABI-encoded receiver address
-            data: abi.encodeWithSelector(
-                IControllerGoFundMe.crossChainDonation.selector,
-                _index,
-                _amount
-            ), // Encode the function selector and the arguments of the stake function
+            data: abi.encode(_ProjectIndex), // Encode the function selector and the arguments of the stake function
             tokenAmounts: tokenAmounts, // The amount and type of token being transferred
             extraArgs: Client._argsToBytes(
                 // Additional arguments, setting gas limit
@@ -142,7 +138,7 @@ contract Sender is OwnerIsCreator {
             messageId,
             _destinationChainSelector,
             receiver,
-            _index,
+            _ProjectIndex,
             address(i_usdcToken),
             _amount,
             address(i_linkToken),

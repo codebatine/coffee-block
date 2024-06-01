@@ -14,6 +14,7 @@ import {Sender} from "../src/Sender.sol";
 import {MockERC20} from "forge-std/mocks/MockERC20.sol";
 import {MockGoFundMe} from "./mocks/MockGoFundMe.t.sol";
 import {MockControllerGoFundMe} from "./mocks/MockController.t.sol";
+import {MockFirstContract} from "./mocks/FirstContract.t.sol";
 
 contract RecieverTest is Test {
     using SafeERC20 for ERC20;
@@ -22,6 +23,7 @@ contract RecieverTest is Test {
     Receiver public receiver;
     MockGoFundMe public R_goFundMe;
     MockControllerGoFundMe public R_controller;
+    MockFirstContract public firstContract;
     //    IControllerGoFundMe public controller;
     IGoFundMe public goFundMe;
 
@@ -35,6 +37,8 @@ contract RecieverTest is Test {
     MockERC20 public SusdcToken;
     MockERC20 public SlinkToken;
     MockERC20 public RusdcToken;
+
+    MockGoFundMe two_goFundMe;
 
     address ReceiverRouter = 0x0BF3dE8c5D3e8A2B34D2BEeB17ABfCeBaf363A59; // SEPOLIA router
     //address SUSDC = 0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f;
@@ -51,13 +55,11 @@ contract RecieverTest is Test {
 
     function setUp() public {
         vm.deal(Alice, 1 ether);
-
-        // controller
-
-        R_controller = new MockControllerGoFundMe();
-        vm.prank(Alice);
-        //R_controller.createNewProject(address(RusdcToken));
-        // SENDER
+        i_RRouter = IRouterClient(ReceiverRouter);
+        vm.deal(address(i_RRouter), 1 ether);
+        /////////////
+        // SENDER //
+        ////////////
         SusdcToken = new MockERC20();
         SusdcToken._mint(Alice, 1000 * 1e6);
         SlinkToken = new MockERC20();
@@ -65,10 +67,11 @@ contract RecieverTest is Test {
         Susdc = ERC20(address(SusdcToken));
         Slink = ERC20(address(SlinkToken));
         i_SRouter = IRouterClient(SenderRouter);
-        // RECEIVER
+        /////////////
+        // RECEIVER//
+        /////////////
         RusdcToken = new MockERC20();
         Rusdc = ERC20(address(RusdcToken));
-        i_RRouter = IRouterClient(ReceiverRouter);
         vm.startPrank(Alice);
         sender = new Sender(address(i_SRouter), address(Slink), address(Susdc));
         receiver = new Receiver(
@@ -77,16 +80,46 @@ contract RecieverTest is Test {
             address(i_controller)
         );
         vm.stopPrank();
-
+        vm.deal(address(receiver), 1 ether);
+        RusdcToken._mint(address(i_RRouter), 1000 * 1e6);
+        ///////////////////
+        // FirstContract //
+        ///////////////////
+        firstContract = new MockFirstContract(
+            address(RusdcToken),
+            address(R_controller)
+        );
+        /////////////////////
+        /////// SetUP////////
+        /////////////////////
+        RusdcToken._mint(address(firstContract), 1000 * 1e6);
         RusdcToken._mint(address(receiver), 1000 * 1e6);
+        vm.deal(address(firstContract), 1 ether);
         // Project
         //        R_goFundMe = new MockGoFundMe(address(Rusdc));
 
-        // i_controller = IControllerGoFundMe(i_controller);
+        /////////////////////
+        //// Controller /////
+        /////////////////////
+        R_controller = new MockControllerGoFundMe();
+        vm.startPrank(Alice);
+        R_controller.createNewProject(address(RusdcToken));
+        R_controller.createNewProject(address(RusdcToken));
+        R_controller.createNewProject(address(RusdcToken));
+        vm.stopPrank();
+
+        /////////////////////
+        //// GoFundMe ///////
+        /////////////////////
+        two_goFundMe = R_controller.getProject(1);
+        R_goFundMe = R_controller.getProject(0);
         vm.startPrank(Alice);
         Slink.transfer(address(sender), 4 * 1e18);
         Susdc.transfer(address(sender), 20 * 1e6);
-        // SetUP Sender
+
+        /////////////////////
+        //// SetUp Sender ///
+        /////////////////////
         sender.setGasLimitAndRecieverForDestinationChain(
             ChainSelector_SEPOLIA,
             gasLimit,
@@ -94,19 +127,25 @@ contract RecieverTest is Test {
         );
         vm.stopPrank();
 
-        // setUp receiver
+        /////////////////////
+        // SetUp receiver ///
+        /////////////////////
         vm.startPrank(Alice);
-        //    receiver.setProjectContract(address(R_goFundMe));
         receiver.setSenderForSourceChain(ChainSelector_POLY, address(sender));
         vm.stopPrank();
 
-        vm.deal(address(receiver), 1 ether);
-
+        /////////////////////
+        // Logs addressess///
+        /////////////////////
         console.log("Sender: ", address(sender));
         console.log("Receiver: ", address(receiver));
         console.log("i_SRouter: ", address(i_SRouter));
         console.log("i_RRouter: ", address(i_RRouter));
         console.log("Alice: ", Alice);
+        console.log("R_controller: ", address(R_controller));
+        console.log("R_goFundMe: ", address(R_goFundMe));
+        console.log("two_goFundMe: ", address(two_goFundMe));
+        console.log("FirstContract: ", address(firstContract));
     }
 
     function test_setSenderForSourceChain() public {
@@ -134,15 +173,11 @@ contract RecieverTest is Test {
             token: address(Rusdc),
             amount: 20
         });
+        uint256 _index = 1;
         // Create an EVM2AnyMessage struct in memory with necessary information for sending a cross-chain message
         Client.EVM2AnyMessage memory evm2AnyMessage = Client.EVM2AnyMessage({
             receiver: abi.encode(receiver), // ABI-encoded receiver address
-            data: abi.encodeWithSelector(
-                IControllerGoFundMe.crossChainDonation.selector,
-                //address(R_goFundMe),
-                1,
-                20
-            ), // Encode the function selector and the arguments of the stake function
+            data: abi.encode(_index), // Encode the function selector and the arguments of the stake function
             tokenAmounts: tokenAmounts, // The amount and type of token being transferred
             extraArgs: Client._argsToBytes(
                 // Additional arguments, setting gas limit
@@ -164,6 +199,6 @@ contract RecieverTest is Test {
         vm.prank(0x0BF3dE8c5D3e8A2B34D2BEeB17ABfCeBaf363A59);
         receiver.ccipReceive(dataPackage);
 
-        //assertEq(Rusdc.balanceOf(address(R_goFundMe)), 20 * 1e6);
+        // assertEq(Rusdc.balanceOf(address(two_goFundMe)), 20 * 1e6);
     }
 }

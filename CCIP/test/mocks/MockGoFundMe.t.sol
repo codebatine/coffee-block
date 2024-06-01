@@ -16,16 +16,10 @@
 
 pragma solidity ^0.8.18;
 
-library Constants {
-    uint8 public constant ETH_USD_DECIMALS = 8;
-    int256 public constant INITIAL_ETH_USD_PRICE = 2000e8;
-    uint256 public constant MINIMUM_USD = 5 * 1e6;
-    uint256 public constant USD_DECIMALS = 1e6;
-}
-
 //import {IERC20} from "forge-std/interfaces/IERC20.sol";
 import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
 import {ERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/ERC20.sol";
+import {Constants} from "./Constants.c.sol";
 
 contract MockGoFundMe {
     using SafeERC20 for ERC20;
@@ -44,8 +38,6 @@ contract MockGoFundMe {
     bool private hasBeenSet = false;
     bool private ProjectIsComplete = false;
 
-    uint8 private immutable i_decimals;
-
     mapping(address => uint256) public m_donations; // A mapping of the donations that have been made by the funders.
 
     modifier onlyOwner() {
@@ -56,7 +48,7 @@ contract MockGoFundMe {
     constructor(address _usdcTokenAddress, address _owner) {
         i_owner = _owner;
         if (_usdcTokenAddress == address(0)) revert InvalidUsdcsToken();
-        usdc = ERC20(_usdcTokenAddress);
+        usdc = ERC20(_usdcTokenAddress); // IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238);
         usdcTokenAddress = _usdcTokenAddress;
     }
 
@@ -91,7 +83,6 @@ contract MockGoFundMe {
 
     function fundFromContract(uint256 _amount) external {
         uint256 amountInDecimals = _amount * Constants.USD_DECIMALS;
-        //        usdc.transferFrom(_from, address(this), amountInDecimals);
         usdc.safeTransferFrom(msg.sender, address(this), amountInDecimals);
         m_donations[msg.sender] += amountInDecimals;
         totalBalance += amountInDecimals;
