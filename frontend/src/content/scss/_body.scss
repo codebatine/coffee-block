@@ -45,10 +45,6 @@ a {
     text-align: center;
     font-size: 2rem;;
   }
-
-  p {
-    margin: 10px 0;
-  }
 }
 
 
@@ -73,14 +69,14 @@ a {
 
 p {
   font-family: "Roboto", sans-serif;
+  font-weight: 300;
   max-width: 70%;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 20px 0;
+  line-height: 1.5;
   
   @media (min-width: 1024px) {
     max-width: 50%;
   }
-  
 }
 
 h1 {
@@ -265,7 +261,7 @@ a:hover {
     margin: 0 auto;
   }
   
-  h2, p {
+  h2 {
     text-align: left;
     margin-left: auto;
     margin-right: auto;
