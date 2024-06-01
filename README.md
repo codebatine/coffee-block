@@ -37,4 +37,4 @@ We would like to improve this further and are open for suggestions and disucssio
 ## Screenshots :camera_flash:
 
 ![Coffee Block Screenshot](/frontend/src/content/img/coffee-block-screenshot-1.png)
-![Coffee Block Screenshot](/frontend/src/content/img/coffee-block-screenshot-1.png)
+![Coffee Block Screenshot](/frontend/src/content/img/coffee-block-screenshot-2.png)
