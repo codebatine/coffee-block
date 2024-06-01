@@ -79,6 +79,15 @@ p {
   }
 }
 
+.content-container em {
+  font-style: italic;
+  color: #666;
+  border-left: 3px solid #ccc;
+  padding-left: 10px;
+  display: block;
+  margin: 10px 0;
+}
+
 h1 {
   font-size: 3rem;
 }

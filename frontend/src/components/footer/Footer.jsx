@@ -5,7 +5,7 @@ export const Footer = () => {
     <footer className="footer">
 
       <div className="copyright">
-        <p>© 2024 Coffee Block.</p>
+        <p>© 2024 <a href="https://github.com/codebatine/coffee-block" target="_blank" rel="noreferrer">Coffee Block</a>.</p>
       </div>
       <div className="social-links">
         <a
