@@ -28,7 +28,7 @@ contract Sender is OwnerIsCreator {
         bytes32 indexed messageId,
         uint64 indexed destinationChainSelector,
         address indexed receiver,
-        uint8 index,
+        uint64 index,
         address token,
         uint256 tokenAmount,
         address feeToken,
@@ -77,7 +77,7 @@ contract Sender is OwnerIsCreator {
 
     function sendMessagePayLINK(
         uint64 _destinationChainSelector,
-        uint8 _index,
+        uint64 _index,
         uint64 _amount
     )
         external

@@ -96,7 +96,7 @@ contract RecieverTest is Test {
 
         // setUp receiver
         vm.startPrank(Alice);
-        receiver.setProjectContract(address(R_goFundMe));
+        //    receiver.setProjectContract(address(R_goFundMe));
         receiver.setSenderForSourceChain(ChainSelector_POLY, address(sender));
         vm.stopPrank();
 
