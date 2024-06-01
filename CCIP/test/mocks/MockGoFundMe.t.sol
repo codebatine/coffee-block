@@ -23,13 +23,18 @@ library Constants {
     uint256 public constant USD_DECIMALS = 1e6;
 }
 
-import {IERC20} from "forge-std/interfaces/IERC20.sol";
+//import {IERC20} from "forge-std/interfaces/IERC20.sol";
+import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
+import {ERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/ERC20.sol";
 
 contract MockGoFundMe {
+    using SafeERC20 for ERC20;
+
     error NotOwner();
     error NotEnoughFunds();
+    error InvalidUsdcsToken();
 
-    IERC20 public usdc;
+    ERC20 public usdc;
     string public projectName;
     uint256 public goalInUsd;
     uint256 public totalBalance; // The total amount of funds that have been raised.
@@ -39,6 +44,8 @@ contract MockGoFundMe {
     bool private hasBeenSet = false;
     bool private ProjectIsComplete = false;
 
+    uint8 private immutable i_decimals;
+
     mapping(address => uint256) public m_donations; // A mapping of the donations that have been made by the funders.
 
     modifier onlyOwner() {
@@ -46,9 +53,10 @@ contract MockGoFundMe {
         _;
     }
 
-    constructor(address _usdcTokenAddress) {
-        i_owner = msg.sender;
-        usdc = IERC20(_usdcTokenAddress); // IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238);
+    constructor(address _usdcTokenAddress, address _owner) {
+        i_owner = _owner;
+        if (_usdcTokenAddress == address(0)) revert InvalidUsdcsToken();
+        usdc = ERC20(_usdcTokenAddress);
         usdcTokenAddress = _usdcTokenAddress;
     }
 
@@ -81,13 +89,14 @@ contract MockGoFundMe {
         emit FundReceived(msg.sender, amountInDecimals);
     }
 
-    function fundFromContract(address _from, uint256 _amount) external {
+    function fundFromContract(uint256 _amount) external {
         uint256 amountInDecimals = _amount * Constants.USD_DECIMALS;
-        require(usdc.transferFrom(_from, address(this), amountInDecimals));
-        m_donations[_from] += amountInDecimals;
+        //        usdc.transferFrom(_from, address(this), amountInDecimals);
+        usdc.safeTransferFrom(msg.sender, address(this), amountInDecimals);
+        m_donations[msg.sender] += amountInDecimals;
         totalBalance += amountInDecimals;
-        funders.push(_from);
-        emit FundReceived(_from, amountInDecimals);
+        funders.push(msg.sender);
+        emit FundReceived(msg.sender, amountInDecimals);
     }
 
     function withdraw() public onlyOwner {

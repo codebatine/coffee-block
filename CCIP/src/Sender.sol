@@ -7,6 +7,7 @@ import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.s
 import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IGoFundMe} from "../interface/IGoFundMe.i.sol";
+import {IControllerGoFundMe} from "../interface/IControllerGoFundMe.i.sol";
 
 contract Sender is OwnerIsCreator {
     using SafeERC20 for IERC20;
@@ -27,7 +28,7 @@ contract Sender is OwnerIsCreator {
         bytes32 indexed messageId,
         uint64 indexed destinationChainSelector,
         address indexed receiver,
-        address beneficiary,
+        uint64 index,
         address token,
         uint256 tokenAmount,
         address feeToken,
@@ -76,7 +77,7 @@ contract Sender is OwnerIsCreator {
 
     function sendMessagePayLINK(
         uint64 _destinationChainSelector,
-        address _beneficiary,
+        uint64 _index,
         uint64 _amount
     )
         external
@@ -102,8 +103,8 @@ contract Sender is OwnerIsCreator {
         Client.EVM2AnyMessage memory evm2AnyMessage = Client.EVM2AnyMessage({
             receiver: abi.encode(receiver), // ABI-encoded receiver address
             data: abi.encodeWithSelector(
-                IGoFundMe.fundFromContract.selector,
-                _beneficiary,
+                IControllerGoFundMe.crossChainDonation.selector,
+                _index,
                 _amount
             ), // Encode the function selector and the arguments of the stake function
             tokenAmounts: tokenAmounts, // The amount and type of token being transferred
@@ -141,7 +142,7 @@ contract Sender is OwnerIsCreator {
             messageId,
             _destinationChainSelector,
             receiver,
-            _beneficiary,
+            _index,
             address(i_usdcToken),
             _amount,
             address(i_linkToken),

@@ -22,6 +22,11 @@ contract ControllerGoFundMe {
         emit ProjectCreated(msg.sender, fundMe);
     }
 
+    function crossChainDonation(uint256 _index, uint256 _amount) public {
+        GoFundMe project = getProject(_index);
+        project.fundFromContract(_amount);
+    }
+
     function getProjectList() public view returns (GoFundMe[] memory) {
         return goFundMeProjects;
     }

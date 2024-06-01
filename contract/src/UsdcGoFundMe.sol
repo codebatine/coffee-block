@@ -17,13 +17,17 @@
 pragma solidity ^0.8.18;
 
 import {Constants} from "./constants/Constants.c.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
+import {ERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/ERC20.sol";
 
 contract GoFundMe {
+    using SafeERC20 for ERC20;
+
     error NotOwner();
     error NotEnoughFunds();
+    error InvalidUsdcsToken();
 
-    IERC20 public usdc;
+    ERC20 public usdc;
     string public projectName;
     uint256 public goalInUsd;
     uint256 public totalBalance; // The total amount of funds that have been raised.
@@ -42,7 +46,8 @@ contract GoFundMe {
 
     constructor(address _usdcTokenAddress, address _owner) {
         i_owner = _owner;
-        usdc = IERC20(_usdcTokenAddress); // IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238);
+        if (_usdcTokenAddress == address(0)) revert InvalidUsdcsToken();
+        usdc = ERC20(_usdcTokenAddress); // IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238);
         usdcTokenAddress = _usdcTokenAddress;
     }
 
@@ -75,13 +80,14 @@ contract GoFundMe {
         emit FundReceived(msg.sender, amountInDecimals);
     }
 
-    function fundFromContract(address _from, uint256 _amount) external {
+    function fundFromContract(uint256 _amount) external {
         uint256 amountInDecimals = _amount * Constants.USD_DECIMALS;
-        require(usdc.transferFrom(_from, address(this), amountInDecimals));
-        m_donations[_from] += amountInDecimals;
+        //        usdc.transferFrom(_from, address(this), amountInDecimals);
+        usdc.safeTransferFrom(msg.sender, address(this), amountInDecimals);
+        m_donations[msg.sender] += amountInDecimals;
         totalBalance += amountInDecimals;
-        funders.push(_from);
-        emit FundReceived(_from, amountInDecimals);
+        funders.push(msg.sender);
+        emit FundReceived(msg.sender, amountInDecimals);
     }
 
     function withdraw() public onlyOwner {
