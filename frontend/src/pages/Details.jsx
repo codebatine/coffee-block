@@ -7,6 +7,7 @@ export const Details = () => {
 
   const [startFunding, setstartFunding] = useState(false)
   const [fundingStep2, setFundingStep2] = useState(false)
+  const [lastStep, setLastStep] = useState(false)
   const [connected, setConnected] = useState(false)
   const [wallet, setWallet] = useState(null)
   const [application, setApplication] = useState(null)
@@ -32,10 +33,14 @@ export const Details = () => {
 
   const handleClick = (e) => {
     e.preventDefault();
+    if(fundingStep2 === true) {
+      setLastStep(true)
+      return;
+    }
     if(startFunding === true){
       setFundingStep2(true)
       return;
-    }
+    }    
     setstartFunding(true);
   }
 
@@ -94,7 +99,7 @@ export const Details = () => {
           </div>
         </form>
           <div className="button-control">
-            <button className="application-button" onClick={fundingStep2 ? connectWallet : handleClick}>{fundingStep2 ? "Connect Wallet" : "Next step in funding." }</button>
+            <button className={connected ? "application-button-disabled" : "application-button"} onClick={fundingStep2 ? connectWallet : handleClick}>{fundingStep2 ? "Connect Wallet" : "Next step in funding." }</button>
           </div>
           {fundingStep2 && connected && 
           <div>
@@ -104,10 +109,13 @@ export const Details = () => {
             <div>
               <span>Transfer {fundingForm.amount} USDC to ABCDEF.<br/></span>
               <span>Transfer 2 LINK to GHIJKL.<br/></span>
-              <span>Wait for transaction to finish before the last step...<br/></span>
+              <span>Wait for both of the transactions to finish before doing the last step.<br/></span>
             </div>
             <div className="button-control">
-            <button className="submit-button" onClick={handleSubmit}>Submit</button>
+            <button className={lastStep ? "application-button-disabled" : "application-button"} onClick={handleClick}>{lastStep ? "Continue to the last step.": "Press when the transactions are finished."}</button>
+          </div>
+            <div className="button-control">
+            <button className={!lastStep ? "application-button-disabled" : "application-button"} onClick={handleSubmit} disabled={!lastStep}>Last step</button>
           </div>
           </div>}
         </section>
