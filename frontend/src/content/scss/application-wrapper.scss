@@ -1,7 +1,13 @@
 .application-wrapper{
   display: flex;
-  flex-direction: column;
-  width: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  background: #fff;
+  border-radius: 10px;
+  width: 90%;
+  margin: 30px auto;
+}
 
   .step0{
     display: flex;
@@ -10,13 +16,27 @@
     align-content: center;
     align-items: center;
 
-    h2{
+    h2, h3 {
       margin: 10px;
+      text-align: center;
+      font-size: 2rem;;
+    }
+  
+    p {
+      margin: 10px 0;
     }
 
     div{
       padding: 3px;
     }
+
+    // .inline-button{
+    //   border: 1px solid black;
+    //   height: 20px;
+    //   padding: 5px;
+    //   background-color: rgb(167, 225, 243);
+    //   cursor: pointer;
+    // }
   }
 
   .step1, .step2, .step3{
@@ -71,26 +91,27 @@
   .button-control{
     display: flex;
     justify-content: center;
+    flex-direction: column;
     margin: 15px 0px;
 
-    button{
-      border: 1px solid black;
-      height: 40px;
-      padding: 10px;
-      background-color: rgb(167, 225, 243);
-      cursor: pointer;
+    // button{
+    //   border: 1px solid black;
+    //   height: 40px;
+    //   padding: 10px;
+    //   background-color: rgb(167, 225, 243);
+    //   cursor: pointer;
 
-      &:hover{
-        background-color:  rgb(124, 217, 245);;
-      }
-    }
+    //   &:hover{
+    //     background-color:  rgb(124, 217, 245);;
+    //   }
+    // }
 
-    .false{
-      border: 1px solid red;
-    }
+    // .false{
+    //   border: 1px solid red;
+    // }
 
-    .true{
-      border: 1px solid green;
-    }
+    // .true{
+    //   border: 1px solid green;
+    // }
   }
-}
+

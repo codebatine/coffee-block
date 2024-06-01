@@ -8,13 +8,23 @@ import {DeployFundMe} from "../script/DeployGoFundMeUsdc.s.sol";
 contract ControllerGoFundMe {
     GoFundMe fundMe;
     GoFundMe[] public goFundMeProjects;
-    uint256 projectCount;
+
+    uint256 public projectCount = 0;
+
+    event ProjectCreated(address indexed _owner, GoFundMe _project);
 
     function createNewProject() public {
         DeployFundMe deployFundMe = new DeployFundMe();
         fundMe = deployFundMe.run(msg.sender);
         goFundMeProjects.push(fundMe);
         projectCount++;
+
+        emit ProjectCreated(msg.sender, fundMe);
+    }
+
+    function crossChainDonation(uint256 _index, uint256 _amount) public {
+        GoFundMe project = getProject(_index);
+        project.fundFromContract(_amount);
     }
 
     function getProjectList() public view returns (GoFundMe[] memory) {

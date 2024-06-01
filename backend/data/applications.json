@@ -1,1 +1,115 @@
-[{"company":"Company name for contract 2","amount":"5000000","area":"kaaafffe","reason":"pengar","time":"555","name":"123","email":"456","date":1716373691916,"published":"no","id":"aeadd7fb0dce497386f4d2b16c6f6977"},{"company":"Company name for contract 3","amount":"123123213","area":"knark","reason":"babababa","time":"546","name":"567","email":"2342","date":1716373713614,"published":"no","id":"a030eac1e5604fa485e516e83193c034"},{"company":"Company name for contract 1","amount":"123","area":"1234","reason":"fghfgh","time":"fgh","name":"567","email":"346","date":1716373722152,"published":"yes","id":"95f1b7c388694a73acf5679eee0c8f2a"},{"company":"company","amount":"asd","area":"asdasd","reason":"asdas","time":"dsad","name":"asd","email":"asdasd","date":1716389983240,"published":"no","id":"291e5cca1505429b8d02665a4a50179e"},{"company":"company","amount":"asd","area":"asdasd","reason":"asdas","time":"dsad","name":"asd","email":"asdasd","date":1716389984164,"published":"no","id":"77cbe28dcbd8444eb193b311b5d9a5cb"},{"company":"company","amount":"asd","area":"asdasd","reason":"asdas","time":"dsad","name":"asd","email":"asdasd","date":1716389984635,"published":"no","id":"feac6d3488aa487494a8c32350063e30"},{"company":"company","amount":"jhg","area":"ghjhgj","reason":"jghjg","time":"ghjghjj","name":"ghj","email":"ghjghj","date":1716390555601,"published":"yes","id":"154a654249024f05b51fd061fd2d3f35"},{"company":"company","amount":"asfdasf","area":"asdasd","reason":"asda","time":"asdsadd","name":"asdsad","email":"sadsad","date":1716391274067,"published":"yes","id":"59973e1da5064c6b82367d3638bbd7ba"},{"company":"Company name for contract 2","amount":"50000","area":"Coffee farming","reason":"Need maaney","time":"6 months","name":"Rasmus","email":"rasmus@mail.com","date":1716391520649,"published":"yes","id":"4e02dadd57ff496a9efb099e70816db2"},{"company":"Company name for contract 2","amount":"500000000","area":"jkfdhgskjh","reason":"jkhkjh","time":"kjhkjh","name":"jkhkj","email":"kjhkljh","date":1716400805848,"published":"no","id":"c2410e96a3a34ccbb35470072ecac3a7"},{"company":"company","amount":"jhk","area":"hkhkhjj","reason":"hjkjh","time":"hjkjhkk","name":"hjkhjk","email":"hjkjhk","date":1716400945570,"published":"yes","id":"8ff193e4db874a4799cb9359499e3fce"}]
+[
+  {
+    "company": "Green World Coffee Farm",
+    "amount": "50000",
+    "index": 14,
+    "owner": "0x6245dccdeaad9d5ed699a87d172a611a9d1e0c68",
+    "project": "project",
+    "area": "Coffee grower's cafe & espresso bar with retail space selling whole beans & Hawaiian specialties.",
+    "reason": "Expanding into Europe.",
+    "time": "6 months.",
+    "name": "Jen Mirkel",
+    "email": "jen@mirkel.com",
+    "lastUpdate": 1717155006119,
+    "published": "no",
+    "image": {
+      "src": "/coffeeblock/content/coffee-1.jpg",
+      "alt": "Picture of coffee beans."
+    },
+    "id": "27481517e6044985a7cb1f964a89191b"
+  },
+  {
+    "company": "Coffee Delight",
+    "amount": "12000",
+    "index": 15,
+    "owner": "0xe6BaC36102d5AFf51FEBA294147B9F2a161B9659",
+    "project": "project",
+    "area": "Coffee grower's cafe & espresso bar with retail space selling whole beans & Hawaiian specialties.",
+    "reason": "Expanding into Europe.",
+    "time": "6 weeks.",
+    "name": "Amari Yonas",
+    "email": "support@coffeedelight.io",
+    "lastUpdate": 1717160894049,
+    "published": "yes",
+    "image": {
+      "src": "/coffeeblock/content/coffee-2.jpg",
+      "alt": "Coffee bean"
+    },
+    "id": "daa34621469346a881faadcaffd54c6a"
+  },
+  {
+    "company": "Tango Bean",
+    "amount": "4000",
+    "index": 2,
+    "owner": "0x6245dccdeaad9d5ed699a87d172a611a9d1e0c68",
+    "project": "project",
+    "area": "Beanland",
+    "reason": "Facilities",
+    "time": "6 weeks",
+    "name": "Beany Boy",
+    "email": "bean@tangobean.io",
+    "lastUpdate": 1717165397132,
+    "published": "yes",
+    "image": {
+      "src": "/coffeeblock/content/coffee-3.jpg",
+      "alt": "Coffee bean"
+    },
+    "id": "30b45f0a8415443a86fd4d2e67af8224"
+  },
+  {
+    "company": "Coffee Brothers",
+    "amount": "5000",
+    "index": 3,
+    "owner": "0x12060934d32f0cAE0A14eD39399F283f58867030",
+    "project": "project",
+    "area": "Southern Colombia",
+    "reason": "Plantation tools",
+    "time": "4 weeks",
+    "name": "Bean Bro Buffin",
+    "email": "crypto@coffeebrothers.io",
+    "lastUpdate": 1717166501747,
+    "published": "yes",
+    "image": {
+      "src": "/coffeeblock/content/coffee-4.jpg",
+      "alt": "Coffee bean"
+    },
+    "id": "2227c0bdec6e43e19fc3c37c03766099"
+  },
+  {
+    "company": "Java Gems",
+    "index": 4,
+    "owner": "0x6245dccdeaad9d5ed699a87d172a611a9d1e0c68",
+    "project": "0x1bd859C0bC73d43C319aF5051508F770185D2852",
+    "area": "area",
+    "reason": "reason",
+    "time": "time",
+    "name": "name",
+    "email": "email",
+    "lastUpdate": "2024-05-31T19:20:54.416Z",
+    "published": "no",
+    "image": {
+      "src": "/coffeeblock/content/coffee-6.jpg",
+      "alt": "Coffee bean"
+    },
+    "id": "0c6b5ad47b3640178ed213030342c63c"
+  },
+  {
+    "company": "Java Gems",
+    "amount": "7500",
+    "index": 5,
+    "owner": "0x6245dccdeaad9d5ed699a87d172a611a9d1e0c68",
+    "project": "0xe8D1d98EA16bb57f7DC78055216C2c6c27941Ad8",
+    "area": "Sumatra",
+    "reason": "Organic fertilizers",
+    "time": "6 months",
+    "name": "Putri Anggraini",
+    "email": "contact@javagems.io",
+    "lastUpdate": 1717183327818,
+    "published": "no",
+    "image": {
+      "src": "/coffeeblock/content/coffee-6.jpg",
+      "alt": "Coffee bean"
+    },
+    "id": "a3850fb155074ff09e768e02425b430c"
+  }
+]

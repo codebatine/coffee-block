@@ -17,19 +17,25 @@
 pragma solidity ^0.8.18;
 
 import {Constants} from "./constants/Constants.c.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
+import {ERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/ERC20.sol";
 
 contract GoFundMe {
+    using SafeERC20 for ERC20;
+
     error NotOwner();
     error NotEnoughFunds();
+    error InvalidUsdcsToken();
 
-    IERC20 public usdc;
+    ERC20 public usdc;
     string public projectName;
     uint256 public goalInUsd;
     uint256 public totalBalance; // The total amount of funds that have been raised.
     address[] public funders; // Creates a list of funderns that the frontend can use together with m_donations to display the funders and the amount they donated.
     address public immutable i_owner;
     address public usdcTokenAddress;
+    bool private hasBeenSet = false;
+    bool private ProjectIsComplete = false;
 
     mapping(address => uint256) public m_donations; // A mapping of the donations that have been made by the funders.
 
@@ -40,7 +46,8 @@ contract GoFundMe {
 
     constructor(address _usdcTokenAddress, address _owner) {
         i_owner = _owner;
-        usdc = IERC20(_usdcTokenAddress); // IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238);
+        if (_usdcTokenAddress == address(0)) revert InvalidUsdcsToken();
+        usdc = ERC20(_usdcTokenAddress); // IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238);
         usdcTokenAddress = _usdcTokenAddress;
     }
 
@@ -51,11 +58,14 @@ contract GoFundMe {
         string memory _projectName,
         uint256 _goalInUsd
     ) public onlyOwner {
+        require(!hasBeenSet, "Name and goal has already been set");
         projectName = _projectName;
         goalInUsd = _goalInUsd * Constants.USD_DECIMALS;
+        hasBeenSet = true;
     }
 
     function fund(uint256 _amount) public {
+        require(!ProjectIsComplete, "Project is already complete");
         uint256 amountInDecimals = _amount * Constants.USD_DECIMALS;
 
         require(
@@ -70,12 +80,23 @@ contract GoFundMe {
         emit FundReceived(msg.sender, amountInDecimals);
     }
 
+    function fundFromContract(uint256 _amount) external {
+        uint256 amountInDecimals = _amount * Constants.USD_DECIMALS;
+        //        usdc.transferFrom(_from, address(this), amountInDecimals);
+        usdc.safeTransferFrom(msg.sender, address(this), amountInDecimals);
+        m_donations[msg.sender] += amountInDecimals;
+        totalBalance += amountInDecimals;
+        funders.push(msg.sender);
+        emit FundReceived(msg.sender, amountInDecimals);
+    }
+
     function withdraw() public onlyOwner {
         require(totalBalance >= goalInUsd, "Goal not reached");
 
         uint256 amount = usdc.balanceOf(address(this));
         usdc.transfer(i_owner, amount);
         totalBalance = 0;
+        ProjectIsComplete = true;
         emit FundsWithdrawn(i_owner, amount);
     }
 
