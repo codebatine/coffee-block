@@ -181,7 +181,7 @@ export const loadReadContract = async (contractAddress) => {
 
 // Sender funding contract
 
-export const funderSend = async (projectAddress) => {
+export const funderSend = async (amount, index) => {
   console.log('!funderSend started');
 
   // try {
@@ -196,15 +196,15 @@ export const funderSend = async (projectAddress) => {
   console.log(RECIEVER_CONTRACT.polygon_amoy);
 
   const chainSelector = CHAIN_SELECTOR.polygon_amoy;
-  const gasLimitValue = 300000;
   const receiverContract = RECIEVER_CONTRACT.polygon_amoy;
+  const indexString = index.toString();
+  const amountDecimal = amount * 1000000;
 
-  const gasLimit =
-    await writeContract.setGasLimitAndRecieverForDestinationChain(
-      chainSelector,
-      gasLimitValue,
-      receiverContract
-    );
+  const gasLimit = await writeContract.sendMessagePayLINK(
+    chainSelector,
+    indexString,
+    amountDecimal
+  );
   console.log('2');
 
   await gasLimit.wait();

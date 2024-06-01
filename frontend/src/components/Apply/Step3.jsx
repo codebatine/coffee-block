@@ -19,7 +19,6 @@ export const Step3 = ({infoStatus, setInfoStatus, setProjectId}) => {
       const address = await getAddress();
       const startedApplications = response.data.filter((c) => { return c.owner.trim().toLowerCase() === address.trim().toLowerCase()});
       setApplications(startedApplications)
-      console.log("!!!", startedApplications);
       setFetchStatus("fetched")
       } catch (error) {
         console.error("Error fetching applications:", error);
