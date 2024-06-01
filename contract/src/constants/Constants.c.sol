@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.25;
 
 library Constants {
     uint8 public constant ETH_USD_DECIMALS = 8;

@@ -3,15 +3,12 @@
 /*
  * This contract is a goFundMe contract that allows user to donate to a cause.
  * The cotract has an owner, a goal, a deadline, a balance and a mapping of contributions.
- * This contract will be initialized from a other contract that will be the owner of this contract.
+ * This contract will be initialized from a user on another contract and the user will be the owner of this contract/project.
  * The owner will be able to set the goal and deadline of the campaign.
  * The owner will be able to withdraw the funds after the deadline has passed and the goal has been reached.
- * The owner will be able to refund the contributors if the deadline has passed and the goal has not been reached.
  * The contributors will be able to contribute to the campaign. and will have the ability to fund from a
  * different blockchain thrue CCIP (Cross-Chain Interoperability Protocol) from chainlink.
- * The contributors will be able to withdraw their funds if the deadline has passed and the goal has not been reached.
- *
- * This cotract will also use Chainlink pricefeed to get the price of the token that will be used to fund the campaign.
+ 
  */
 
 pragma solidity ^0.8.25;
@@ -68,6 +65,7 @@ contract GoFundMe {
         require(!ProjectIsComplete, "Project is already complete");
         uint256 amountInDecimals = _amount * Constants.USD_DECIMALS;
 
+        usdc.safeApprove(address(this), amountInDecimals);
         require(
             usdc.transferFrom(msg.sender, address(this), amountInDecimals),
             "Transfer failed"
@@ -80,23 +78,25 @@ contract GoFundMe {
         emit FundReceived(msg.sender, amountInDecimals);
     }
 
-    function fundFromContract(uint256 _amount) external {
-        uint256 amountInDecimals = _amount * Constants.USD_DECIMALS;
-        usdc.safeTransferFrom(msg.sender, address(this), amountInDecimals);
-        m_donations[msg.sender] += amountInDecimals;
-        totalBalance += amountInDecimals;
-        funders.push(msg.sender);
-        emit FundReceived(msg.sender, amountInDecimals);
-    }
-
     function withdraw() public onlyOwner {
         require(totalBalance >= goalInUsd, "Goal not reached");
 
         uint256 amount = usdc.balanceOf(address(this));
-        usdc.transfer(i_owner, amount);
+        usdc.safeTransfer(i_owner, amount);
         totalBalance = 0;
         ProjectIsComplete = true;
         emit FundsWithdrawn(i_owner, amount);
+    }
+
+    function withdrawIftotalBalanceIsZero() public onlyOwner {
+        require(totalBalance < 1, "Total balance is not zero");
+        uint256 amount = usdc.balanceOf(address(this));
+        usdc.safeTransfer(i_owner, amount);
+        emit FundsWithdrawn(i_owner, amount);
+    }
+
+    function getContractUSDCBalance() public view returns (uint256) {
+        return usdc.balanceOf(address(this));
     }
 
     function getSignerUSDCBalance() public view returns (uint256) {

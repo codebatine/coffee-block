@@ -7,9 +7,9 @@ import {CCIPReceiver} from "@chainlink/contracts-ccip/src/v0.8/ccip/applications
 import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
 import {EnumerableMap} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/utils/structs/EnumerableMap.sol";
-import {ChainSelectors} from "./constants/Constants.c.sol";
-import {IControllerGoFundMe} from "../interface/IControllerGoFundMe.i.sol";
-import {IGoFundMe} from "../interface/IGoFundMe.i.sol";
+
+import {ControllerGoFundMe} from "./ControllerGoFundMe.sol";
+import {GoFundMe} from "./UsdcGoFundMe.sol";
 
 contract Receiver is CCIPReceiver, OwnerIsCreator {
     using SafeERC20 for IERC20;
@@ -52,8 +52,8 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
     }
 
     IERC20 private immutable i_usdcToken;
-    IGoFundMe private i_goFundMe;
-    IControllerGoFundMe private immutable i_controller;
+    GoFundMe private i_goFundMe;
+    ControllerGoFundMe private immutable i_controller;
 
     mapping(uint64 => address) public s_senders;
     mapping(bytes32 => Client.Any2EVMMessage) public s_messageContents;
@@ -70,16 +70,19 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
         _;
     }
 
-    constructor(
-        address _router,
-        address _usdcToken,
-        address _controller
-    ) CCIPReceiver(_router) {
+    constructor(address _router, address _usdcToken) CCIPReceiver(_router) {
         if (_usdcToken == address(0)) revert InvalidUsdcToken();
-        if (_controller == address(0)) revert InvalidController();
-        i_controller = IControllerGoFundMe(i_controller);
+        i_controller = new ControllerGoFundMe(_usdcToken);
         i_usdcToken = IERC20(_usdcToken);
-        i_usdcToken.safeApprove(_controller, type(uint256).max);
+    }
+
+    function getControllerAddress() public view returns (ControllerGoFundMe) {
+        return i_controller;
+    }
+
+    function getProjectTest(uint256 _index) public view returns (GoFundMe) {
+        GoFundMe projectIndex = i_controller.getProject(_index);
+        return projectIndex;
     }
 
     function setSenderForSourceChain(
@@ -132,17 +135,21 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
                 any2EvmMessage.destTokenAmounts[0].token
             );
 
-        uint256 _index = abi.decode(any2EvmMessage.data, (uint256));
-        address projectIndex = i_controller.getProject(_index);
-
-        i_goFundMe = IGoFundMe(projectIndex);
+        (uint256 _index, uint256 _amount) = abi.decode(
+            any2EvmMessage.data,
+            (uint256, uint256)
+        );
+        GoFundMe projectIndex = i_controller.getProject(_index);
 
         i_usdcToken.safeApprove(
             address(projectIndex),
             any2EvmMessage.destTokenAmounts[0].amount
         );
 
-        i_goFundMe.fundFromContract(any2EvmMessage.destTokenAmounts[0].amount);
+        transferTokenToProject(
+            address(projectIndex),
+            any2EvmMessage.destTokenAmounts[0].amount
+        );
 
         emit MessageReceived(
             any2EvmMessage.messageId,
@@ -154,7 +161,7 @@ contract Receiver is CCIPReceiver, OwnerIsCreator {
         );
     }
 
-    function transferTokenToProject(address project, uint256 _amount) external {
+    function transferTokenToProject(address project, uint256 _amount) public {
         i_usdcToken.safeTransfer(project, _amount);
     }
 
