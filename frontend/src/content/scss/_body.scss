@@ -233,7 +233,7 @@ a:hover {
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin: 10px 0;
+  margin: 10px auto;
 }
 
 .application-button:hover {
@@ -262,6 +262,9 @@ a:hover {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
   transition: box-shadow 0.3s ease-in-out;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
 
   .img-container-x img {
     display: block;
@@ -270,7 +273,7 @@ a:hover {
     margin: 0 auto;
   }
   
-  h2 {
+  h2, p {
     text-align: left;
     margin-left: auto;
     margin-right: auto;
