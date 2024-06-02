@@ -1,11 +1,13 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import { funderSend, requestAccount } from "../services/blockchainServices";
+import { fetchFunding, funderSend, requestAccount } from "../services/blockchainServices";
 import { SENDER_CONTRACT } from "../services/config";
 
 export const Details = () => {
 
+  const [showFunding, setShowFunding] = useState(false)
+  const [fundingAmount, setFundingAmount] = useState(null)
   const [startFunding, setstartFunding] = useState(false)
   const [fundingStep2, setFundingStep2] = useState(false)
   const [lastStep, setLastStep] = useState(false)
@@ -13,6 +15,8 @@ export const Details = () => {
   const [wallet, setWallet] = useState(null)
   const [application, setApplication] = useState(null)
   const [fundingForm, setFundingForm] = useState({amount: 0, chainId: "000"})
+  const [sepoliaTx, setsepoliaTx] = useState(null)
+  const [chainlinkTx, setChainlinkTx] = useState(null)
 
   const { id } = useParams();
 
@@ -20,9 +24,7 @@ export const Details = () => {
     const getApplications = async () => {
       try {
         const response = await axios.get(`http://localhost:3001/api/v1/applications/application/${id}`)
-        console.log(response.data);
         setApplication(response.data)
-        
       } catch (error) {
         console.error('There was an error getting the application!', error);
       }
@@ -31,6 +33,19 @@ export const Details = () => {
     getApplications();
 
   }, [])
+
+  const viewFunding = async () => {
+    if(showFunding === false){
+      try {
+        // const funding = await fetchFunding(application.project)
+        // console.log(funding);
+        setFundingAmount(`https://www.oklink.com/amoy/address/${application.project}`)
+      } catch (error) {
+        
+      }
+    }
+    setShowFunding(prevState => !prevState)
+  }
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -57,6 +72,9 @@ export const Details = () => {
       const reponse = await funderSend(fundingForm.amount, application.index)
       
       console.log("!funderSend complete", reponse);
+      setsepoliaTx(reponse.hash)
+      setChainlinkTx(reponse.to)
+
     } catch (error) {
       console.log(error);
     }
@@ -81,6 +99,11 @@ export const Details = () => {
             <p>Time: {application.time || 'N/A'}</p>
             <p>Details last updated: {new Date(application.lastUpdate).toLocaleDateString("en-US") || 'N/A'}</p>
           <div className="img-container-x"><img src={application.image.src} alt="Coffee cup" /></div>
+            <div className="button-control">
+              <button className="application-button" onClick={viewFunding}>{showFunding ? "Hide funding progress" : "View funding progress" }</button>
+            </div>
+            {showFunding && <div>Project funding is available here: <a href={fundingAmount} target="_blank">Project contract address</a></div>}
+          
         <div className="button-control">
             <button onClick={handleClick} className={startFunding ? "application-button-disabled" : "application-button"} disabled={startFunding}>
               Fund this project!
@@ -118,6 +141,11 @@ export const Details = () => {
             <div className="button-control">
             <button className={!lastStep ? "application-button-disabled" : "application-button"} onClick={handleSubmit} disabled={!lastStep}>Last step</button>
           </div>
+          {chainlinkTx && 
+          <div>
+            <div><a href={`https://sepolia.etherscan.io/address/${sepoliaTx}`} target="_blank">Follow Sepolia transaction</a></div>
+              <div><a href={`https://ccip.chain.link/address/${chainlinkTx}`} target="_blank">Follow Chainlink transaction</a></div>
+            </div>}
           </div>}
         </section>
         {/* {fundingStep2 && (

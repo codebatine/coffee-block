@@ -182,38 +182,27 @@ export const loadReadContract = async (contractAddress) => {
 // Sender funding contract
 
 export const funderSend = async (amount, index) => {
-  console.log('!funderSend started');
+  try {
+    const contractAddress = SENDER_CONTRACT.eth_sepholia;
 
-  // try {
-  const contractAddress = SENDER_CONTRACT.eth_sepholia;
-  console.log('contract address', contractAddress);
+    const writeContract = await loadWriteContract_c(contractAddress);
 
-  const writeContract = await loadWriteContract_c(contractAddress);
-  console.log('!writeContract', writeContract);
+    const chainSelector = CHAIN_SELECTOR.polygon_amoy;
+    const indexString = index.toString();
+    const amountDecimal = amount * 1000000;
 
-  console.log('1');
-  console.log(CHAIN_SELECTOR.polygon_amoy);
-  console.log(RECIEVER_CONTRACT.polygon_amoy);
+    const usdcTransfer = await writeContract.sendMessagePayLINK(
+      chainSelector,
+      indexString,
+      amountDecimal
+    );
 
-  const chainSelector = CHAIN_SELECTOR.polygon_amoy;
-  const receiverContract = RECIEVER_CONTRACT.polygon_amoy;
-  const indexString = index.toString();
-  const amountDecimal = amount * 1000000;
+    const response = await usdcTransfer.wait();
 
-  const gasLimit = await writeContract.sendMessagePayLINK(
-    chainSelector,
-    indexString,
-    amountDecimal
-  );
-  console.log('2');
-
-  await gasLimit.wait();
-
-  console.log('!gasLimit set', gasLimit);
-  return gasLimit;
-  // } catch (error) {
-  //   console.log('funkade inte', error);
-  // }
+    return response;
+  } catch (error) {
+    console.log('funkade inte', error);
+  }
 };
 
 export const loadWriteContract_c = async (contractAddress) => {
@@ -233,6 +222,35 @@ export const loadWriteContract_c = async (contractAddress) => {
   // console.log('!applicationWriteContract:', applicationWriteContract);
 
   return applicationWriteContract;
+};
+
+export const fetchFunding = async (address) => {
+  try {
+    const contractAddress = address;
+    const readContract = await loadWriteContract_project(contractAddress);
+    console.log(readContract);
+    const response = await readContract.getTotalBalance();
+
+    console.log(Number(response).toFixed(3));
+  } catch (error) {
+    console.error('Error in fetching:', error);
+    throw error;
+  }
+};
+
+export const loadWriteContract_project = async (contractAddress) => {
+  if (contractAddress === '') {
+    return;
+  }
+
+  const signer = await provider.getSigner();
+
+  const applicationReadContract = new ethers.Contract(
+    contractAddress,
+    abi_b,
+    signer
+  );
+  return applicationReadContract;
 };
 
 //create application
