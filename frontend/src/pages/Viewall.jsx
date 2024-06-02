@@ -29,6 +29,9 @@ export const Viewall = () => {
 
 
       <div className="grid-container">
+      <div className="content-container">
+        <h2>Projects Avaiting Support</h2>
+      </div>
         {applications.length > 0 ? 
         <>{applications.map((application) => application.published === "yes" && (
         <div key={application.id} className="grid-item">
