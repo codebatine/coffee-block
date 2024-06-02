@@ -97,7 +97,7 @@ export const Details = () => {
             <h2>Company: {application.company || 'N/A'}</h2>
             <h2>Area: {application.area || 'N/A'}</h2>
             <p>Reason: {application.reason || 'N/A'}</p>
-            <p>Amount: {application.amount || 'N/A'}</p>
+            <p>Amount: {application.amount || 'N/A'} $</p>
             <p>Time: {application.time || 'N/A'}</p>
             <p>Details last updated: {new Date(application.lastUpdate).toLocaleDateString("en-US") || 'N/A'}</p>
           <div className="img-container-x"><img src={application.image.src} alt="Coffee cup" /></div>
