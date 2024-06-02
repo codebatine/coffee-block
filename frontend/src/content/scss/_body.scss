@@ -96,6 +96,11 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Josefin Sans", sans-serif;
 }
 
+.highlighted-link {
+  color: $color-coffee;
+  font-weight: bold;
+}
+
 a:hover {
   cursor: pointer;
 }
