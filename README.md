@@ -28,6 +28,17 @@ As blockchain development students this was our first hackathon. We had to read 
 
 We would like to improve this project further and are open for suggestions and discussions. Here's our [Coffee Block Telegram group](https://t.me/+yHxclZ9JCyQ1ZjFk).
 
+## Start the DApp :flamingo:
+
+- 'npm i' (on both backend & frontend)
+- 'npm run start' in backend folder
+- 'npm run dev' in frontend folder
+
+## Wallets Settings :fox_face:
+
+- Connect to Polygon Amoy
+- Use Sepolia for Sender-Funding
+
 ## Team :star2:
 
 - [Carl Klöfverskjöld](https://github.com/Reblixt)
