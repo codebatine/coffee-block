@@ -58,7 +58,7 @@ export const Admin = () => {
                 <div className="application-detail">{application.area || "area missing"}</div>
                 <div className="application-detail">{application.reason || "reason missing"}</div>
                 <div className="application-detail">{application.time || "time missing"}</div>
-                <div className="application-detail">{application.date || "date missing"}</div>
+                {/* <div className="application-detail">{application.date || "date missing"}</div> */}
                 <div className="admin-publish-buttons">
                   {application.published === "no" ? (
                     <button className="application-button" onClick={(e) => handlePublish(application.id, e)}>

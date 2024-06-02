@@ -7,7 +7,7 @@ import { SENDER_CONTRACT } from "../services/config";
 export const Details = () => {
 
   const [showFunding, setShowFunding] = useState(false)
-  const [fundingAmount, setFundingAmount] = useState(null)
+  const [fundingAmount, setFundingAmount] = useState(0)
   const [fundingAmountTx, setFundingAmountTx] = useState(null)
   const [startFunding, setstartFunding] = useState(false)
   const [fundingStep2, setFundingStep2] = useState(false)
