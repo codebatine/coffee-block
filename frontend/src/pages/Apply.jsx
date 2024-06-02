@@ -1,3 +1,4 @@
+import img1 from '../content/img/coffee-10.jpg';
 import { Step1 } from "../components/Apply/Step1"
 import { Step2 } from "../components/Apply/Step2"
 import { Step3 } from "../components/Apply/Step3"
@@ -37,10 +38,14 @@ export const Apply = () => {
     <div className="application-wrapper">
       {step === "step0" &&  (
       <div className="step0">
-          <h2>The application process is a three step process:</h2>
+        <br/>
+          <h2>Apply For Funding</h2>
+          <img className="responsive-img" src={img1} alt="Coffee." />
+          <br/>
           <p>1. Connect your wallet to log in.</p>
           <p>2. Create a contract for your application.</p>
           <p>3. Input your business details.</p>
+          <br/>
           <button className="application-button" onClick={()=> setStep("step3")}>Go to step 3</button>
 
         <div className="button-control">
