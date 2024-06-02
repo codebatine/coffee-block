@@ -35,7 +35,8 @@ export const Viewall = () => {
           <Link to={`/coffeeblock/details/${application.id}`}><div className="img-container"><img src={application.image.src} alt="Coffee cup" /></div></Link>
           <div className="caption"><h2>{application.company || "company missing"}</h2></div>
           <h2>{application.area || "area missing"}</h2>
-          <p>{application.reason || "reason missing"}</p>
+          <p>{application.reason || "reason missing"} - {application.amount || "amount missing"} $</p>
+          
         </div>)
       )}</>
         :

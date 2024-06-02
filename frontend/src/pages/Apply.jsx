@@ -14,7 +14,7 @@ export const Apply = () => {
 
   const [step, setStep] = useState("step0");
 
-  const [connected, setConnected] = useState("false");
+  const [connected, setConnected] = useState(false);
   const [address, setAddress] = useState("");
   const [contractStatus, setContractStatus] = useState("Not created")
   const [infoStatus, setInfoStatus] = useState("Not submitted")
@@ -23,7 +23,7 @@ export const Apply = () => {
   const connectWallet = async () => {
     const response = await requestAccount();
     if(response) {
-      setConnected("true")
+      setConnected(true)
       setAddress(response)
       // loadReadContract(CONTRTACT_ADDRESS)
       // loadWriteContract(CONTRTACT_ADDRESS)

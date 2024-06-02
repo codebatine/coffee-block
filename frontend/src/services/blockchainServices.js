@@ -11,9 +11,17 @@ import {
   abi_e,
 } from './config.js';
 
-const provider = new ethers.BrowserProvider(window.ethereum);
+export const provider = new ethers.BrowserProvider(window.ethereum);
 
-// WALLET FUNCTIONS
+export const detectChain = async () => {
+  const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+  return chainId;
+  // provider.on('chainChanged', handleChainChanged);
+
+  // function handleChainChanged(chainId) {
+  //   window.location.reload();
+  // }
+};
 
 export const requestAccount = async () => {
   console.log('1');
