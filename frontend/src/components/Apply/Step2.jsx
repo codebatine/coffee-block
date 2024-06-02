@@ -80,7 +80,7 @@ export const Step2 = ({contractStatus, setContractStatus}) => {
         <h2>2.1 Create contract</h2>
       <div className="button-control">
         
-        {!contract && !loading && <div>Start the process, of creating a contract on the blockchain, by confirming the transaction that is initiated when you press the button below.</div>}
+        {!contract && !loading && <p>Start the process, of creating a contract on the blockchain, by confirming the transaction that is initiated when you press the button below.</p>}
         {!contract && !loading && <button className="application-button" onClick={handleClick}>Create</button>}
         {!contract && loading && <div>Waiting for blockchain transaction to finish ...</div>}
         {contract && <div>Contract created at: <a target="_blank" href={`https://www.oklink.com/amoy/address/${contract}`}>{contract}</a></div>}

@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import { fetchFunding, funderSend, requestAccount } from "../services/blockchainServices";
+import { detectChain, fetchFunding, funderSend, requestAccount } from "../services/blockchainServices";
 import { SENDER_CONTRACT } from "../services/config";
 
 export const Details = () => {
@@ -18,6 +18,7 @@ export const Details = () => {
   const [fundingForm, setFundingForm] = useState({amount: 0, chainId: "000"})
   const [sepoliaTx, setsepoliaTx] = useState(null)
   const [chainlinkTx, setChainlinkTx] = useState(null)
+  const [chainId, setChainId] = useState("")
 
   const { id } = useParams();
 
@@ -84,6 +85,8 @@ export const Details = () => {
 
   const connectWallet = async () => {
     const response = await requestAccount();
+    const chain = await detectChain();
+    setChainId(chain)
     setConnected(true);
     setWallet(response)
   }
@@ -130,9 +133,8 @@ export const Details = () => {
           </div>
           {fundingStep2 && connected && 
           <div>
-            <div>
-              Wallet {wallet} is connected.
-            </div>
+      {connected && <div>You are connected with: {wallet},</div> }
+      {connected && <div>on chain: {chainId}.</div> }
             <div>
             <br/>
               <span>Transfer {fundingForm.amount} USDC to {SENDER_CONTRACT.eth_sepholia}.<br/></span>
