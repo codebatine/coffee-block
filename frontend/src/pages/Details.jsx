@@ -134,9 +134,13 @@ export const Details = () => {
               Wallet {wallet} is connected.
             </div>
             <div>
+            <br/>
               <span>Transfer {fundingForm.amount} USDC to {SENDER_CONTRACT.eth_sepholia}.<br/></span>
+              <br/>
               <span>Transfer 2 LINK to {SENDER_CONTRACT.eth_sepholia}.<br/></span>
+              <br/>
               <span>Wait for both of the transactions to finish before doing the last step.<br/></span>
+              <br/>
             </div>
             <div className="button-control">
             <button className={lastStep ? "application-button-disabled" : "application-button"} onClick={handleClick}>{lastStep ? "Continue to the last step.": "Press when the transactions are finished."}</button>
