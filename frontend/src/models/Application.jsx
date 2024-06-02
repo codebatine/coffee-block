@@ -12,15 +12,14 @@ export default class Application {
     this.email = email || "email";
     this.lastUpdate = lastUpdate || new Date();
     this.published = published || "no";
-    this.image = {src: "/coffeeblock/content/coffee-6", alt: "Coffee bean"}
-    // this.image = {src: this.src(), alt: "Coffee bean"}
+    this.image = {src: this.src(), alt: "Coffee bean"}
   }
 
-  // src() {
+  src() {
 
-  //   const random = (Math.random() * (6 - 1) + 1).toFixed(0);
-  //   const url = `/coffeeblock/content/coffee-${random}.jpg`
+    const random = (Math.random() * (6 - 1) + 1).toFixed(0);
+    const url = `/coffeeblock/content/coffee-${random}.jpg`
 
-  //   return url;
-  // }
+    return url;
+  }
 }
