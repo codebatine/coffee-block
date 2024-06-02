@@ -19,7 +19,6 @@ export const Step3 = ({infoStatus, setInfoStatus, setProjectId}) => {
       const address = await getAddress();
       const startedApplications = response.data.filter((c) => { return c.owner.trim().toLowerCase() === address.trim().toLowerCase()});
       setApplications(startedApplications)
-      console.log("!!!", startedApplications);
       setFetchStatus("fetched")
       } catch (error) {
         console.error("Error fetching applications:", error);
@@ -102,11 +101,11 @@ export const Step3 = ({infoStatus, setInfoStatus, setProjectId}) => {
             <input type="text" id="applyform-business-area" name="area" onChange={handleSetForm}></input>
           </div>
           <div className="form-control">
-            <label htmlFor="applyform-reason">Reason for loan application</label>
+            <label htmlFor="applyform-reason">Reason for loan</label>
             <input type="text" id="applyform-reason" name="reason" onChange={handleSetForm}></input>
           </div>
           <div className="form-control">
-            <label htmlFor="applyform-time-period">Time period for loan</label>
+            <label htmlFor="applyform-time-period">Time period</label>
             <input type="text" id="applyform-time-period" name="time" onChange={handleSetForm}></input>
           </div>
           

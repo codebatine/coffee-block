@@ -8,11 +8,20 @@ import {
   abi_ccip_receiver,
   CHAIN_SELECTOR,
   RECIEVER_CONTRACT,
+  abi_e,
 } from './config.js';
 
-const provider = new ethers.BrowserProvider(window.ethereum);
+export const provider = new ethers.BrowserProvider(window.ethereum);
 
-// WALLET FUNCTIONS
+export const detectChain = async () => {
+  const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+  return chainId;
+  // provider.on('chainChanged', handleChainChanged);
+
+  // function handleChainChanged(chainId) {
+  //   window.location.reload();
+  // }
+};
 
 export const requestAccount = async () => {
   console.log('1');
@@ -89,6 +98,8 @@ export const createContract = async () => {
     });
 
     const projectCONT = await writeContract.getProjectList();
+    console.log(projectCONT);
+
     const projectList = Object.values(projectCONT); // lista på goFundMe-kontrakt
     const projects = [];
     for (const project of projectList) {
@@ -181,39 +192,28 @@ export const loadReadContract = async (contractAddress) => {
 
 // Sender funding contract
 
-export const funderSend = async (projectAddress) => {
-  console.log('!funderSend started');
+export const funderSend = async (amount, index) => {
+  try {
+    const contractAddress = SENDER_CONTRACT.eth_sepholia;
 
-  // try {
-  const contractAddress = SENDER_CONTRACT.eth_sepholia;
-  console.log('contract address', contractAddress);
+    const writeContract = await loadWriteContract_c(contractAddress);
 
-  const writeContract = await loadWriteContract_c(contractAddress);
-  console.log('!writeContract', writeContract);
+    const chainSelector = CHAIN_SELECTOR.polygon_amoy;
+    const indexString = index.toString();
+    const amountDecimal = amount * 1000000;
 
-  console.log('1');
-  console.log(CHAIN_SELECTOR.polygon_amoy);
-  console.log(RECIEVER_CONTRACT.polygon_amoy);
-
-  const chainSelector = CHAIN_SELECTOR.polygon_amoy;
-  const gasLimitValue = 300000;
-  const receiverContract = RECIEVER_CONTRACT.polygon_amoy;
-
-  const gasLimit =
-    await writeContract.setGasLimitAndRecieverForDestinationChain(
+    const usdcTransfer = await writeContract.sendMessagePayLINK(
       chainSelector,
-      gasLimitValue,
-      receiverContract
+      indexString,
+      amountDecimal
     );
-  console.log('2');
 
-  await gasLimit.wait();
+    const response = await usdcTransfer.wait();
 
-  console.log('!gasLimit set', gasLimit);
-  return gasLimit;
-  // } catch (error) {
-  //   console.log('funkade inte', error);
-  // }
+    return response;
+  } catch (error) {
+    console.log('funkade inte', error);
+  }
 };
 
 export const loadWriteContract_c = async (contractAddress) => {
@@ -234,6 +234,67 @@ export const loadWriteContract_c = async (contractAddress) => {
 
   return applicationWriteContract;
 };
+
+export const fetchFunding = async (address) => {
+  try {
+    const contractAddress = address;
+    const writeContract = await loadWriteContract_project(contractAddress);
+    const usdc = '0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582';
+    console.log(writeContract);
+    const usdcBalance = await writeContract.balanceOf(usdc, contractAddress);
+
+    // const response = await usdcBalance.wait();
+
+    return usdcBalance;
+  } catch (error) {
+    console.error('Error in fetching:', error);
+    throw error;
+  }
+};
+
+export const loadWriteContract_project = async (contractAddress) => {
+  if (contractAddress === '') {
+    return;
+  }
+
+  const signer = await provider.getSigner();
+
+  const applicationReadContract = new ethers.Contract(
+    '0xe5B941Ac150Ad15d10f09a9029cA1E3040a85f8D',
+    abi_e,
+    signer
+  );
+  return applicationReadContract;
+};
+
+// export const fetchFunding = async (address) => {
+//   try {
+//     const contractAddress = address;
+//     const readContract = await loadWriteContract_project(contractAddress);
+//     console.log(readContract);
+//     const response = await readContract.getTotalBalance();
+
+//     console.log(Number(response).toFixed(3));
+//   } catch (error) {
+//     console.error('Error in fetching:', error);
+//     throw error;
+//   }
+// };
+
+// export const loadWriteContract_project = async (contractAddress) => {
+//   if (contractAddress === '') {
+//     return;
+//   }
+
+//   const signer = await provider.getSigner();
+
+//   const applicationReadContract = new ethers.Contract(
+//     contractAddress,
+//     abi_b,
+//     signer
+//   );
+//   return applicationReadContract;
+// };
 
 //create application
 
