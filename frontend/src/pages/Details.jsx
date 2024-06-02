@@ -139,7 +139,7 @@ export const Details = () => {
             <button className={lastStep ? "application-button-disabled" : "application-button"} onClick={handleClick}>{lastStep ? "Continue to the last step.": "Press when the transactions are finished."}</button>
           </div>
             <div className="button-control">
-            <button className={!lastStep ? "application-button-disabled" : "application-button"} onClick={handleSubmit} disabled={!lastStep}>Last step</button>
+            <button className={!lastStep ? "application-button-disabled" : "application-button"} onClick={handleSubmit} disabled={!lastStep}>Last step - Execute the funding.</button>
           </div>
           {chainlinkTx && 
           <div>

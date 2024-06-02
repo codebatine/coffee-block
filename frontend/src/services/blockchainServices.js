@@ -89,6 +89,8 @@ export const createContract = async () => {
     });
 
     const projectCONT = await writeContract.getProjectList();
+    console.log(projectCONT);
+
     const projectList = Object.values(projectCONT); // lista på goFundMe-kontrakt
     const projects = [];
     for (const project of projectList) {
