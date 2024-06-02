@@ -90,8 +90,8 @@ export const Details = () => {
 
   return (
     <>
+    <div className="content-container">
       <div className="main-content-x">
-        <div className="grid-container">
           {application !== null &&         
           <div className="grid-item-x">
             <h2>Company: {application.company || 'N/A'}</h2>
@@ -119,7 +119,7 @@ export const Details = () => {
         <div className="funding-wrapper">
         <section className="funding-form-wrapper">
         <form onSubmit={handleSubmit}>
-          <div>Enter the amount you want to fund the project with.</div>
+          <p>Enter the amount you want to fund the project with.</p>
           <div className="form-control">
             <label htmlFor="fund-form-amount">Fund amount</label>
             <input type="text" id="fund-form-amount" name="amount" className={fundingStep2 ? "funding-amount-read" : "funding-amount-write"} readOnly={fundingStep2} value={fundingForm.amount} onChange={handleChange}></input>
