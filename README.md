@@ -1,34 +1,34 @@
-# Coffee Block
+# Coffee Block :coffee:
 
-## Inspiration
+## Inspiration :bulb:
 
-Coffee Block was born out of our passion for crypto and coffee! We want to create a project that allows crypto coffee lovers to support small scale farms and producers.
+Coffee Block was born out of our passion for crypto and coffee! We wanted to create a project that allows crypto coffee lovers to support small scale farms and producers. This is a proof of concept dapp.
 
-## What We Learned
+## What it does :farmer:
 
-As blockchain development students, Chainlink Black Magic 2024 Hackathon was our first. We had to read up on CCIP and thanks to the Chainlink Bootcamps done in January and April, we had a basic enough understanding to pursue with the project. We had to learn and put to practice the following for the hackathon:
+Enables crypto users to support local coffee farmers anywhere in the world. This results in immediate support, interactivity and community building. With transparency and accountability throughout the donation process, supporters can track their contributions and monitor their impact in real time. Bridging crypto coffee lovers with small coffee producers.
 
-Smart Contracts + Solidity
-Frontend connection with the backend
-To get CCIP to work
+## How we built it :jigsaw:
 
-## Link to Repo
+Coffee Block was built using a combination of blockchain technology, smart contracts and a user-friendly web interface. We utilized Chainlink's CCIP to ensure secure and efficient cross-chain transactions. The frontend was developed using React, while the backend services were implemented with Node.js and Express.
 
-[Check out our repo here](https://github.com/codebatine/coffee-block)
+## Challenges we ran into :construction:
 
-## How We Built Coffee Block
+One of the major challenges we encountered was ensuring the interoperability of different blockchain networks. Writing and testing smart contracts locally was difficult, especially with three contracts involved in a single transaction. We experienced failures and reverted transactions. While we successfully transferred USDC to another chain, we faced issues engaging with the receiver contract and the controller contract. However, we managed to pull it off but not as first imagined.
 
-Coffee Block was built using a combination of smart contracts and a user-friendly web interface. We utilized Chainlink's CCIP to ensure secure and efficient cross-chain transactions. The frontend was developed using React, while the backend services were implemented with Node.js and Express.
+## What we learned :mortar_board:
 
-## Challenges Faced
+As blockchain development students this was our first hackathon. We had to read up on CCIP and thanks to the Chainlink bootcamps done in January and April we had a basic enough understanding to pursue with the project. So this is what we gained more skills on form the hackathon:
 
-One of the major challenges we encountered was ensuring the interoperability of different blockchain networks. Integrating Chainlink's CCIP required thorough testing and validation to ensure seamless cross-chain transactions. We had to change our initial idea and do a workaround. So there will be room for improvement after the hackathon.
+- Smart Contracts + Solidity
+- Frontend connection with the backend using multiple contracts + CCIP
+- Learn about CCIP
 
-## Telegram Group
+## What's next for Coffee Block :crystal_ball:
 
-We would like to improve this further and are open for suggestions and disucssions. Here's our [Coffee Block Telegram group](https://t.me/+yHxclZ9JCyQ1ZjFk)
+We would like to improve this project further and are open for suggestions and discussions. Here's our [Coffee Block Telegram group](https://t.me/+yHxclZ9JCyQ1ZjFk).
 
-## Team
+## Team :star2:
 
 - [Carl Klöfverskjöld](https://github.com/Reblixt)
 - [Rasmus Wersäll](https://github.com/devmus)
