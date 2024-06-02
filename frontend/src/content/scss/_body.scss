@@ -290,6 +290,29 @@ a:hover {
   height: auto;
 }
 
+.admin-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.application-admin-display{
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 5px;
+  padding: 5px;
+
+  .admin-publish-buttons{
+    display: flex;
+    justify-content: end;
+    
+  }
+}
+
+.application-detail {
+  margin-bottom: 10px;
+}
+
 @media (min-width: 768px) {
   .grid-item {
     flex: 0 0 calc(50% - 1rem);

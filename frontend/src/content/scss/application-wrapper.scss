@@ -29,14 +29,6 @@
     div{
       padding: 3px;
     }
-
-    // .inline-button{
-    //   border: 1px solid black;
-    //   height: 20px;
-    //   padding: 5px;
-    //   background-color: rgb(167, 225, 243);
-    //   cursor: pointer;
-    // }
   }
 
   .step1, .step2, .step3{
@@ -93,25 +85,5 @@
     justify-content: center;
     flex-direction: column;
     margin: 15px 0px;
-
-    // button{
-    //   border: 1px solid black;
-    //   height: 40px;
-    //   padding: 10px;
-    //   background-color: rgb(167, 225, 243);
-    //   cursor: pointer;
-
-    //   &:hover{
-    //     background-color:  rgb(124, 217, 245);;
-    //   }
-    // }
-
-    // .false{
-    //   border: 1px solid red;
-    // }
-
-    // .true{
-    //   border: 1px solid green;
-    // }
   }
 
