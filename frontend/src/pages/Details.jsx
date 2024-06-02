@@ -8,6 +8,7 @@ export const Details = () => {
 
   const [showFunding, setShowFunding] = useState(false)
   const [fundingAmount, setFundingAmount] = useState(null)
+  const [fundingAmountTx, setFundingAmountTx] = useState(null)
   const [startFunding, setstartFunding] = useState(false)
   const [fundingStep2, setFundingStep2] = useState(false)
   const [lastStep, setLastStep] = useState(false)
@@ -37,9 +38,10 @@ export const Details = () => {
   const viewFunding = async () => {
     if(showFunding === false){
       try {
-        // const funding = await fetchFunding(application.project)
-        // console.log(funding);
-        setFundingAmount(`https://www.oklink.com/amoy/address/${application.project}`)
+        const funding = await fetchFunding(application.project)
+        const fundingusdc = Number(funding) / 1000000
+        setFundingAmountTx(`https://www.oklink.com/amoy/address/${application.project}`)
+        setFundingAmount(fundingusdc)
       } catch (error) {
         
       }
@@ -102,7 +104,8 @@ export const Details = () => {
             <div className="button-control">
               <button className="application-button" onClick={viewFunding}>{showFunding ? "Hide funding progress" : "View funding progress" }</button>
             </div>
-            {showFunding && <div>Project funding is available here: <a href={fundingAmount} target="_blank">Project contract address</a></div>}
+            {showFunding && <div>Project is already funded with {fundingAmount} USDC.  See contract address here: <a href={fundingAmountTx} target="_blank">LINK</a></div>}
+            
           
         <div className="button-control">
             <button onClick={handleClick} className={startFunding ? "application-button-disabled" : "application-button"} disabled={startFunding}>

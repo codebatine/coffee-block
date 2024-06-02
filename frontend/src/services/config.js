@@ -2,6 +2,7 @@ import ABI_A from '../../../contract/out/ControllerGoFundMe.sol/ControllerGoFund
 import ABI_B from '../../../contract/out/UsdcGoFundMe.sol/GoFundMe.json';
 import ABI_C from '../../../contract/out/Sender.sol/Sender.json';
 import ABI_D from '../../../contract/out/Reciever.sol/Receiver.json';
+import ABI_E from '../../../contract/out/BalanceOf.sol/BalanceOfContractUsdc.json';
 
 export const DEPLOYER_CONTRACT = {
   eth_sepholia: '0x42FA73D453A0413902F1bCbE87B8E5F7d835C768',
@@ -27,5 +28,6 @@ export const CHAIN_SELECTOR = {
 
 export const abi_a = ABI_A.abi;
 export const abi_b = ABI_B.abi;
+export const abi_e = ABI_E.abi;
 export const abi_ccip_sender = ABI_C.abi;
 export const abi_ccip_receiver = ABI_D.abi;

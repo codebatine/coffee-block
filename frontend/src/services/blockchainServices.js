@@ -8,6 +8,7 @@ import {
   abi_ccip_receiver,
   CHAIN_SELECTOR,
   RECIEVER_CONTRACT,
+  abi_e,
 } from './config.js';
 
 const provider = new ethers.BrowserProvider(window.ethereum);
@@ -229,11 +230,14 @@ export const loadWriteContract_c = async (contractAddress) => {
 export const fetchFunding = async (address) => {
   try {
     const contractAddress = address;
-    const readContract = await loadWriteContract_project(contractAddress);
-    console.log(readContract);
-    const response = await readContract.getTotalBalance();
+    const writeContract = await loadWriteContract_project(contractAddress);
+    const usdc = '0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582';
+    console.log(writeContract);
+    const usdcBalance = await writeContract.balanceOf(usdc, contractAddress);
 
-    console.log(Number(response).toFixed(3));
+    // const response = await usdcBalance.wait();
+
+    return usdcBalance;
   } catch (error) {
     console.error('Error in fetching:', error);
     throw error;
@@ -248,12 +252,41 @@ export const loadWriteContract_project = async (contractAddress) => {
   const signer = await provider.getSigner();
 
   const applicationReadContract = new ethers.Contract(
-    contractAddress,
-    abi_b,
+    '0xe5B941Ac150Ad15d10f09a9029cA1E3040a85f8D',
+    abi_e,
     signer
   );
   return applicationReadContract;
 };
+
+// export const fetchFunding = async (address) => {
+//   try {
+//     const contractAddress = address;
+//     const readContract = await loadWriteContract_project(contractAddress);
+//     console.log(readContract);
+//     const response = await readContract.getTotalBalance();
+
+//     console.log(Number(response).toFixed(3));
+//   } catch (error) {
+//     console.error('Error in fetching:', error);
+//     throw error;
+//   }
+// };
+
+// export const loadWriteContract_project = async (contractAddress) => {
+//   if (contractAddress === '') {
+//     return;
+//   }
+
+//   const signer = await provider.getSigner();
+
+//   const applicationReadContract = new ethers.Contract(
+//     contractAddress,
+//     abi_b,
+//     signer
+//   );
+//   return applicationReadContract;
+// };
 
 //create application
 
