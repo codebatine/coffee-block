@@ -41,7 +41,6 @@ contract InterfaceGoFundMeTest is Test {
         vm.prank(alice);
         usdcToken.approve(address(deployer), usdcAmount * 1e6);
         vm.prank(alice);
-        deployer.crossChainDonation(0, usdcAmount);
         firstProject.fund(usdcAmount);
         uint256 amountFunded = firstProject.getTotalBalance();
         assertEq(amountFunded, usdcAmount * 1e6);
